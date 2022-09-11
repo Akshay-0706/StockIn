@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'Home/Home.dart';
+import 'Home/home.dart';
 
 Map<String, WidgetBuilder> routes = {
   "/": (context) => const Home(),

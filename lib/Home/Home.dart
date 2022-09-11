@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:stockin/Home/components/Body.dart';
-
-import '../size.dart';
+import 'package:stockin/components/appDrawer.dart';
+import 'package:stockin/size.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -12,6 +10,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     SizeConfig(context);
     return const Scaffold(
+      drawer: AppDrawer(),
       body: HomeBody(),
     );
   }
