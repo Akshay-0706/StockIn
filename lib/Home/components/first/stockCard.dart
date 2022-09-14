@@ -37,6 +37,7 @@ class StockCard extends StatelessWidget {
                       child: FaIcon(
                     FontAwesomeIcons.google,
                     size: getHeight(20),
+                    color: Theme.of(context).primaryColorDark,
                   )),
                 ),
                 SizedBox(

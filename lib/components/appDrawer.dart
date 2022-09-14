@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:stockin/global.dart';
 
 import '../size.dart';
 
@@ -21,6 +23,7 @@ class AppDrawer extends StatelessWidget {
                 SvgPicture.asset(
                   "assets/icons/logo.svg",
                   width: getHeight(16),
+                  color: Theme.of(context).primaryColorDark,
                 ),
                 SizedBox(width: getHeight(10)),
                 Text(
@@ -30,6 +33,20 @@ class AppDrawer extends StatelessWidget {
                       fontSize: getHeight(16),
                       fontWeight: FontWeight.w600),
                 ),
+                SizedBox(width: getHeight(40)),
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () => themeChanger.changeTheme(),
+                    child: FaIcon(
+                      themeChanger.isDarkMode()
+                          ? FontAwesomeIcons.moon
+                          : Icons.sunny,
+                      size: getHeight(16),
+                      color: Theme.of(context).primaryColorDark,
+                    ),
+                  ),
+                )
               ],
             ),
             SizedBox(height: getHeight(16)),
@@ -107,7 +124,11 @@ class DrawerMenu extends StatelessWidget {
             cursor: SystemMouseCursors.click,
             child: Row(
               children: [
-                SvgPicture.asset(iconPath, width: getHeight(18),),
+                SvgPicture.asset(
+                  iconPath,
+                  width: getHeight(18),
+                  color: Theme.of(context).primaryColorDark,
+                ),
                 SizedBox(width: getHeight(10)),
                 Text(
                   title,

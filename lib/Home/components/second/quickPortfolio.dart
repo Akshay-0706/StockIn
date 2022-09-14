@@ -30,6 +30,7 @@ class QuickPortfolio extends StatelessWidget {
               child: FaIcon(
             iconData,
             size: getHeight(20),
+            color: Theme.of(context).primaryColorDark,
           )),
         ),
         SizedBox(width: getHeight(20)),

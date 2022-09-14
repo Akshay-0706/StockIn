@@ -25,6 +25,7 @@ class Transaction extends StatelessWidget {
             child: FaIcon(
               FontAwesomeIcons.arrowUp,
               size: getHeight(20),
+              color: Theme.of(context).primaryColorDark,
             ),
           )),
         ),
@@ -48,7 +49,7 @@ class Transaction extends StatelessWidget {
             ),
           ],
         ),
-        Spacer(),
+        const Spacer(),
         RichText(
           text: TextSpan(
               text: "Interest rate",
@@ -66,7 +67,7 @@ class Transaction extends StatelessWidget {
                 )
               ]),
         ),
-        Spacer(),
+        const Spacer(),
         Text(
           "\$20,56,76",
           style: TextStyle(

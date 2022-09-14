@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
 
+class ThemeChanger with ChangeNotifier {
+  static bool isThemeDark = false;
+
+  bool isDarkMode() => isThemeDark;
+
+  ThemeMode currentTheme() {
+    return isThemeDark ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  void changeTheme() {
+    isThemeDark = !isThemeDark;
+    notifyListeners();
+  }
+}
+
 class NewTheme {
-  static ThemeData lightTheme() {
+  static ThemeData lightTheme()  {
     return ThemeData(
       fontFamily: "OverPass",
+      brightness: Brightness.light,
       appBarTheme: AppBarTheme(
         elevation: 0,
         backgroundColor: Global.background,
@@ -22,6 +38,7 @@ class NewTheme {
   static ThemeData darkTheme() {
     return ThemeData(
       fontFamily: "OverPass",
+      brightness: Brightness.dark,
       appBarTheme: AppBarTheme(
         elevation: 0,
         backgroundColor: Global.backgroundDark,
@@ -67,5 +84,5 @@ class Global {
   static Color foregroundDark = Colors.white;
   static Color foregroundAltDark = Colors.white54;
   static Color backgroundDark = const Color.fromARGB(255, 0, 10, 0);
-  static Color drawerBgDark = const Color.fromRGBO(248, 248, 248, 1);
+  static Color drawerBgDark = const Color.fromRGBO(20, 20, 20, 1);
 }

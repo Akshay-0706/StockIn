@@ -23,7 +23,10 @@ class RecentPortfolio extends StatelessWidget {
       children: [
         Row(
           children: [
-            FaIcon(iconData),
+            FaIcon(
+              iconData,
+              color: Theme.of(context).primaryColorDark,
+            ),
             SizedBox(width: getHeight(10)),
             Text(
               title,

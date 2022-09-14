@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stockin/size.dart';
 
@@ -29,18 +28,26 @@ class NavBar extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: getWidth(4)),
                       child: TextFormField(
-                        style: TextStyle(fontSize: getHeight(14)),
+                        style: TextStyle(
+                          fontSize: getHeight(14),
+                          color: Theme.of(context).primaryColorDark,
+                        ),
                         cursorColor: Theme.of(context).primaryColorDark,
                         cursorRadius: const Radius.circular(8),
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Search for Stock Market...",
-                        ),
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Search for Stock Market",
+                            hintStyle: TextStyle(
+                              color: Theme.of(context).primaryColorDark,
+                            )),
                       ),
                     ),
                   ),
                 ),
-                const FaIcon(Icons.search),
+                FaIcon(
+                  Icons.search,
+                  color: Theme.of(context).primaryColorDark,
+                ),
                 SizedBox(width: getHeight(10)),
               ],
             ),
@@ -59,6 +66,7 @@ class NavBar extends StatelessWidget {
           FaIcon(
             Icons.notifications_outlined,
             size: getHeight(24),
+            color: Theme.of(context).primaryColorDark,
           ),
           SizedBox(
             width: getHeight(20),
@@ -68,6 +76,7 @@ class NavBar extends StatelessWidget {
               FaIcon(
                 Icons.person,
                 size: getHeight(24),
+                color: Theme.of(context).primaryColorDark,
               ),
               SizedBox(
                 width: getHeight(10),
