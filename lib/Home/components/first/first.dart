@@ -60,11 +60,17 @@ class Top extends StatelessWidget {
         Row(
           children: [
             const Spacer(),
-            Text(
-              "View All",
-              style: TextStyle(
-                color: Theme.of(context).primaryColorDark,
-                fontWeight: FontWeight.w600,
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => Navigator.pushNamed(context, "/indices"),
+                child: Text(
+                  "View All",
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColorDark,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ],

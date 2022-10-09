@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:stockin/Home/components/Body.dart';
-import 'package:stockin/components/appDrawer.dart';
 import 'package:stockin/size.dart';
 
 class Home extends StatelessWidget {
@@ -10,7 +9,6 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     SizeConfig(context);
     return const Scaffold(
-      drawer: AppDrawer(),
       body: HomeBody(),
     );
   }

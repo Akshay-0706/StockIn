@@ -1,0 +1,256 @@
+import 'dart:async';
+import 'dart:ffi';
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:stockin/size.dart';
+
+import '../../database/stock/api.dart';
+import '../../database/stock/indices.dart';
+
+class IndicesBody extends StatefulWidget {
+  const IndicesBody({super.key});
+
+  @override
+  State<IndicesBody> createState() => _IndicesBodyState();
+}
+
+class _IndicesBodyState extends State<IndicesBody> {
+  late Future<Indices> futureIndices;
+  late Timer timer;
+  Color positive = const Color(0xff00a25b), negative = const Color(0xfffc5a5a);
+  String mode = "nse";
+  Map<int, int> cardWidth = {
+    300: 1,
+    400: 2,
+    600: 3,
+    800: 4,
+    1000: 5,
+    1200: 6,
+    1400: 7,
+    1600: 8,
+    1800: 9,
+    2000: 10,
+  };
+
+  void callStock() async {
+    setState(() {
+      futureIndices = fetchIndices(mode);
+    });
+  }
+
+  @override
+  void initState() {
+    futureIndices = fetchIndices(mode);
+
+    timer =
+        Timer.periodic(const Duration(seconds: 1), (Timer t) => callStock());
+    super.initState();
+  }
+
+  int getCardNumbers() {
+    int width = SizeConfig.width.toInt();
+    int value = 12;
+    for (var entry in cardWidth.entries) {
+      if (entry.key >= width) {
+        value = entry.value;
+        break;
+      }
+    }
+    return value;
+  }
+
+  // double getAspectRatio() {
+  //   int width = SizeConfig.width.toInt();
+  //   int height = SizeConfig.height.toInt();
+  //   double value = 1;
+  //   // if(width <= 200)
+  //   // value =
+  //   return value;
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: getHeight(20)),
+            Row(
+              children: [
+                SizedBox(width: getHeight(10)),
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const FaIcon(Icons.arrow_back_ios),
+                  ),
+                ),
+                SizedBox(width: getHeight(10)),
+                Text(
+                  "Indices",
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColorDark,
+                      fontSize: getHeight(22)),
+                ),
+              ],
+            ),
+            SizedBox(height: getHeight(10)),
+            // DefaultTabController(
+            //     length: 2,
+            //     child: Scaffold(
+            //       appBar: AppBar(
+            //         bottom: const TabBar(tabs: [
+            //           Tab(
+            //             text: "NSE",
+            //           ),
+            //           Tab(
+            //             text: "BSE",
+            //           ),
+            //         ]),
+            //       ),
+            //       body: TabBarView(
+            //         children: [
+
+            //         ],
+            //       ),
+            //     )),
+            FutureBuilder<Indices>(
+              future: futureIndices,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const LinearProgressIndicator();
+                }
+
+                return ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                    dragDevices: {
+                      PointerDeviceKind.touch,
+                      PointerDeviceKind.mouse,
+                    },
+                  ),
+                  child: SizedBox(
+                    height: SizeConfig.height * 0.93,
+                    child: GridView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: snapshot.data!.indices.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: getCardNumbers(),
+                        ),
+                        itemBuilder: (context, index) {
+                          String indexValue = snapshot
+                              .data!.indices[index].index.entries
+                              .elementAt(mode == "nse" ? 1 : 0)
+                              .value;
+                          double last = double.parse(snapshot
+                              .data!.indices[index].index.entries
+                              .elementAt(mode == "nse" ? 3 : 1)
+                              .value
+                              .toString());
+                          double variation = double.parse(snapshot
+                              .data!.indices[index].index.entries
+                              .elementAt(mode == "nse" ? 4 : 2)
+                              .value
+                              .toString());
+                          double percentageChange = double.parse(snapshot
+                              .data!.indices[index].index.entries
+                              .elementAt(mode == "nse" ? 5 : 3)
+                              .value
+                              .toString());
+
+                          late Color color;
+                          if (percentageChange >= 1) {
+                            color = positive;
+                          } else if (percentageChange <= -1) {
+                            color = negative;
+                          } else {
+                            if (percentageChange >= 0) {
+                              color = positive.withOpacity(percentageChange);
+                            } else {
+                              color =
+                                  negative.withOpacity(percentageChange * -1);
+                            }
+                          }
+
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: color,
+                                borderRadius: BorderRadius.circular(8),
+                                // boxShadow: [
+                                //   BoxShadow(
+                                //     color: Colors.grey.withOpacity(0.1),
+                                //     spreadRadius: 5,
+                                //     blurRadius: 7,
+                                //     offset: Offset(2, 4),
+                                //   )
+                                // ],
+                                // border: Border.all(color: Theme.of(context).primaryColorDark)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: getHeight(50),
+                                      child: Text(
+                                        indexValue,
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .primaryColorDark,
+                                          fontSize: getHeight(12),
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 3,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      last.toString(),
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text(
+                                          variation.toString(),
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .primaryColorLight,
+                                          ),
+                                        ),
+                                        Text(
+                                          "$percentageChange%",
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .primaryColorLight,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -13,7 +13,7 @@ import '../../size.dart';
 
 class StockBody extends StatefulWidget {
   const StockBody({Key? key}) : super(key: key);
-  final String symbol = "GOOG";
+  final String symbol = "SBIN.NS";
 
   @override
   State<StockBody> createState() => _StockBodyState();
@@ -166,12 +166,12 @@ class _StockBodyState extends State<StockBody> {
           },
         ),
         child: candleStickCreater(
-            snapshot.data!.timestamp,
-            snapshot.data!.open,
-            snapshot.data!.close,
-            snapshot.data!.high,
-            snapshot.data!.low,
-            snapshot.data!.volume),
+            snapshot.data!.timestamp.reversed.toList(),
+            snapshot.data!.open.reversed.toList(),
+            snapshot.data!.close.reversed.toList(),
+            snapshot.data!.high.reversed.toList(),
+            snapshot.data!.low.reversed.toList(),
+            snapshot.data!.volume.reversed.toList()),
       ),
     );
   }
@@ -187,8 +187,16 @@ class _StockBodyState extends State<StockBody> {
     late List<DateTime> newTimestamp;
 
     double getPreviousFinite(int index, List<dynamic> list) {
-      while (list[index--] == null) {
+      while (list[index] == null) {
         if (index == 0) break;
+        index--;
+      }
+
+      if (index == 0 && list[index] == null) {
+        while (list[index] == null) {
+          if (index == list.length - 1) break;
+          index++;
+        }
       }
       return double.parse(list[index].toString());
     }
