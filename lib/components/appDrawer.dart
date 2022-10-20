@@ -5,13 +5,39 @@ import 'package:stockin/global.dart';
 
 import '../size.dart';
 
-class AppDrawer extends StatelessWidget {
-  const AppDrawer({Key? key}) : super(key: key);
+class AppDrawer extends StatefulWidget {
+  const AppDrawer({Key? key, required this.changeTab}) : super(key: key);
+  final Function changeTab;
+
+  @override
+  State<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  int current = 0;
+
+  List<String> tabs = ["Dashboard", "Portfolio", "Market", "News", "Settings"];
+  List<String> tabIcons = [
+    "dashboard",
+    "portfolio",
+    "market",
+    "news",
+    "settings"
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).drawerTheme.backgroundColor,
+      decoration: BoxDecoration(
+        color: Theme.of(context).drawerTheme.backgroundColor,
+        boxShadow: const [
+          BoxShadow(
+            spreadRadius: 5,
+            blurRadius: 5,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: getHeight(20)),
         child: Column(
@@ -22,7 +48,7 @@ class AppDrawer extends StatelessWidget {
               children: [
                 SvgPicture.asset(
                   "assets/icons/logo.svg",
-                  width: getHeight(16),
+                  width: getHeight(18),
                   color: Theme.of(context).primaryColorDark,
                 ),
                 SizedBox(width: getHeight(10)),
@@ -30,10 +56,10 @@ class AppDrawer extends StatelessWidget {
                   "STOCKIN",
                   style: TextStyle(
                       color: Theme.of(context).textTheme.bodyText1?.color,
-                      fontSize: getHeight(16),
+                      fontSize: getHeight(18),
                       fontWeight: FontWeight.w600),
                 ),
-                SizedBox(width: getHeight(40)),
+                SizedBox(width: getHeight(80)),
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
@@ -42,7 +68,7 @@ class AppDrawer extends StatelessWidget {
                       themeChanger.isDarkMode()
                           ? FontAwesomeIcons.moon
                           : Icons.sunny,
-                      size: getHeight(16),
+                      size: getHeight(18),
                       color: Theme.of(context).primaryColorDark,
                     ),
                   ),
@@ -53,45 +79,35 @@ class AppDrawer extends StatelessWidget {
             Container(
               color: Theme.of(context).primaryColorLight,
               height: getHeight(2),
-              width: getHeight(150),
+              width: getHeight(200),
             ),
             SizedBox(height: getHeight(32)),
-            DrawerMenu(
-              iconPath: "assets/icons/drawer/market.svg",
-              title: "Market",
-              tap: () {},
-            ),
-            DrawerMenu(
-              iconPath: "assets/icons/drawer/dashboard.svg",
-              title: "Dashboard",
-              tap: () {},
-            ),
-            DrawerMenu(
-              iconPath: "assets/icons/drawer/portfolio.svg",
-              title: "Portfolio",
-              tap: () {},
-            ),
-            DrawerMenu(
-              iconPath: "assets/icons/drawer/news.svg",
-              title: "News",
-              tap: () {},
-            ),
-            DrawerMenu(
-              iconPath: "assets/icons/drawer/settings.svg",
-              title: "Settings",
-              tap: () {},
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...List.generate(
+                    5,
+                    (index) => DrawerMenu(
+                        iconPath: "assets/icons/drawer/${tabIcons[index]}.svg",
+                        title: tabs[index],
+                        isSelected: current == index,
+                        tap: () {
+                          widget.changeTab(index);
+                          current = index;
+                        }))
+              ],
             ),
             const Spacer(),
             Container(
               color: Theme.of(context).primaryColorLight,
               height: getHeight(2),
-              width: getHeight(150),
+              width: getHeight(200),
             ),
             SizedBox(height: getHeight(16)),
             Text(
               "Team AVSK",
               style: TextStyle(
-                fontSize: getHeight(12),
+                fontSize: getHeight(14),
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).primaryColorLight,
               ),
@@ -110,8 +126,10 @@ class DrawerMenu extends StatelessWidget {
     required this.iconPath,
     required this.title,
     required this.tap,
+    required this.isSelected,
   }) : super(key: key);
   final String iconPath, title;
+  final bool isSelected;
   final GestureTapCallback tap;
 
   @override
@@ -134,13 +152,13 @@ class DrawerMenu extends StatelessWidget {
                   title,
                   style: TextStyle(
                       color: Theme.of(context).textTheme.bodyText1?.color,
-                      fontSize: getHeight(14)),
+                      fontSize: getHeight(16)),
                 ),
               ],
             ),
           ),
         ),
-        SizedBox(height: getHeight(16)),
+        SizedBox(height: getHeight(24)),
       ],
     );
   }

@@ -6,8 +6,8 @@ import 'quickPortfolio.dart';
 import 'recentPortfolio.dart';
 import 'summaryColumn.dart';
 
-class Second extends StatelessWidget {
-  const Second({Key? key}) : super(key: key);
+class PortFolio extends StatelessWidget {
+  const PortFolio({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

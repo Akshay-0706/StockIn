@@ -2,7 +2,8 @@ import 'index.dart';
 
 class Indices {
   final List<Index> indices;
-  Indices(this.indices);
+  final String type;
+  Indices(this.indices, this.type);
 
   factory Indices.fromJson(String type, Map<String, dynamic> json) {
     List<Index> indices = [];
@@ -27,6 +28,6 @@ class Indices {
     indices.sort((a, b) => (double.parse(b.index[percentCng].toString())
         .compareTo(double.parse(a.index[percentCng].toString()))));
 
-    return Indices(indices);
+    return Indices(indices, type);
   }
 }

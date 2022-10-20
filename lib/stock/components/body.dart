@@ -4,9 +4,10 @@ import 'package:candlesticks/candlesticks.dart';
 import 'package:dropdown_button2/custom_dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_table/flutter_expandable_table.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:stockin/components/appDrawer.dart';
 import 'package:stockin/database/stock/api.dart';
+import 'package:stockin/database/stock/finances.dart';
 
 import '../../database/stock/chart.dart';
 import '../../size.dart';
@@ -21,6 +22,7 @@ class StockBody extends StatefulWidget {
 
 class _StockBodyState extends State<StockBody> {
   late Future<Chart> futureStock;
+  late Future<Finances> futureFinances;
   late Timer timer;
   late double regularMarketPrice = 0;
   String selectedRange = "1d", selectedInterval = "1m";
@@ -35,119 +37,138 @@ class _StockBodyState extends State<StockBody> {
   @override
   void initState() {
     futureStock = fetchStock(widget.symbol, "1d", "1m");
+    futureFinances = fetchFinances();
 
-    timer =
-        Timer.periodic(const Duration(seconds: 1), (Timer t) => callStock());
+    // timer =
+    //     Timer.periodic(const Duration(seconds: 1), (Timer t) => callStock());
     super.initState();
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    // timer.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const AppDrawer(),
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.all(getHeight(20)),
-            child: SizedBox(
-              height: SizeConfig.height,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: FaIcon(
-                            Icons.arrow_back_ios_rounded,
-                            size: getHeight(25),
-                            color: Theme.of(context).primaryColorDark,
-                          ),
+    return Padding(
+      padding: EdgeInsets.all(getHeight(20)),
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          dragDevices: {
+            PointerDeviceKind.touch,
+            PointerDeviceKind.mouse,
+          },
+        ),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: SizedBox(
+            height: SizeConfig.height * 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: FaIcon(
+                          Icons.arrow_back_ios_rounded,
+                          size: getHeight(25),
+                          color: Theme.of(context).primaryColorDark,
                         ),
                       ),
-                      SizedBox(width: getHeight(20)),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.symbol,
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColorDark,
-                                fontSize: getHeight(26),
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(height: getHeight(10)),
-                            FutureBuilder<Chart>(
-                              future: futureStock,
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return const LinearProgressIndicator();
-                                }
-                                ranges = List<String>.generate(
-                                    snapshot.data!.validRanges.length,
-                                    (index) =>
-                                        snapshot.data!.validRanges[index]);
-                                return setRegularMarketPrice(snapshot);
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Text(
-                    "Chart",
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                      fontSize: getHeight(26),
-                      fontWeight: FontWeight.w700,
                     ),
+                    SizedBox(width: getHeight(20)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.symbol,
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColorDark,
+                              fontSize: getHeight(26),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: getHeight(10)),
+                          FutureBuilder<Chart>(
+                            future: futureStock,
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const LinearProgressIndicator();
+                              }
+                              ranges = List<String>.generate(
+                                  snapshot.data!.validRanges.length,
+                                  (index) => snapshot.data!.validRanges[index]);
+                              return setRegularMarketPrice(snapshot);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: getHeight(20)),
+                Text(
+                  "Chart",
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColorDark,
+                    fontSize: getHeight(26),
+                    fontWeight: FontWeight.w700,
                   ),
-                  SizedBox(height: getHeight(20)),
-                  FutureBuilder<Chart>(
-                    future: futureStock,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const LinearProgressIndicator();
-                      }
-                      return rangeCreater(FontAwesomeIcons.calendar,
-                          "Data range", true, ranges);
-                    },
-                  ),
-                  SizedBox(height: getHeight(20)),
-                  FutureBuilder<Chart>(
-                    future: futureStock,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const LinearProgressIndicator();
-                      }
-                      return rangeCreater(FontAwesomeIcons.clock,
-                          "Time interval", false, Chart.interval);
-                    },
-                  ),
-                  SizedBox(height: getHeight(20)),
-                  FutureBuilder<Chart>(
-                    future: futureStock,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const LinearProgressIndicator();
-                      }
-                      return chartCreater(snapshot);
-                    },
-                  ),
-                  SizedBox(height: getHeight(10)),
-                ],
-              ),
+                ),
+                SizedBox(height: getHeight(20)),
+                FutureBuilder<Chart>(
+                  future: futureStock,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const LinearProgressIndicator();
+                    }
+                    return rangeCreater(
+                        FontAwesomeIcons.calendar, "Data range", true, ranges);
+                  },
+                ),
+                SizedBox(height: getHeight(20)),
+                FutureBuilder<Chart>(
+                  future: futureStock,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const LinearProgressIndicator();
+                    }
+                    return rangeCreater(FontAwesomeIcons.clock, "Time interval",
+                        false, Chart.interval);
+                  },
+                ),
+                SizedBox(height: getHeight(20)),
+                FutureBuilder<Chart>(
+                  future: futureStock,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const LinearProgressIndicator();
+                    }
+                    return chartCreater(snapshot);
+                  },
+                ),
+                SizedBox(height: getHeight(20)),
+                FutureBuilder<Finances>(
+                  future: futureFinances,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const LinearProgressIndicator();
+                    }
+                    return Expanded(child: buildExpandableTable());
+                  },
+                ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -298,165 +319,159 @@ class _StockBodyState extends State<StockBody> {
                 callStock();
               });
             })
-        // ...List.generate(validRanges.length, (index) {
-        //   return Padding(
-        //     padding: const EdgeInsets.all(8.0),
-        //     child: InkWell(
-        //       onTap: () {
-        //         setState(() {
-        //           if (index != selectedRange) selectedRange = index;
-        //           callStock();
-        //         });
-        //       },
-        //       borderRadius: BorderRadius.circular(8),
-        //       child: Ink(
-        //           width: getHeight(40),
-        //           height: getHeight(25),
-        //           decoration: BoxDecoration(
-        //               color: index == selectedRange
-        //                   ? Theme.of(context).primaryColorDark
-        //                   : Theme.of(context)
-        //                       .primaryColorLight
-        //                       .withOpacity(0.05),
-        //               borderRadius: BorderRadius.circular(8)),
-        //           child: Center(
-        //               child: Text(
-        //             validRanges[index],
-        //             style: TextStyle(
-        //               color: index == selectedRange
-        //                   ? Colors.white
-        //                   : Theme.of(context).primaryColorDark,
-        //               fontSize: getHeight(14),
-        //               fontWeight: FontWeight.bold,
-        //             ),
-        //           ))),
-        //     ),
-        //   );
-        // })
       ],
     );
   }
 }
 
-// class CandleStickPainter extends CustomPainter {
-//   CandleStickPainter(
-//       {required this.open,
-//       required this.close,
-//       required this.high,
-//       required this.low})
-//       : wickPaint = Paint()..color = Colors.black,
-//         gainPaint = Paint()..color = Colors.green,
-//         lossPaint = Paint()..color = Colors.red;
+const Color primaryColor = Color(0xFF1e2f36); //corner
+const Color accentColor = Color(0xFF0d2026); //background
+const TextStyle textStyle = TextStyle(color: Colors.white);
+const TextStyle textStyleSubItems = TextStyle(color: Colors.grey);
 
-//   final List<dynamic> open, close, high, low;
-//   late List<double> newOpen, newClose, newHigh, newLow;
+ExpandableTable buildExpandableTable() {
+  const int col = 6;
+  // const int subCol = 5;
+  const int row = 6;
 
-//   late double lowest, highest;
+  //Creation header
+  // ExpandableTableHeader subHeader = ExpandableTableHeader(
+  //     firstCell: Container(
+  //         color: primaryColor,
+  //         margin: const EdgeInsets.all(1),
+  //         child: const Center(
+  //             child: Text(
+  //           'Expandable Column',
+  //           style: textStyleSubItems,
+  //         ))),
+  //     children: List.generate(
+  //         SUB_COLUMN_COUNT,
+  //         (index) => Container(
+  //             color: primaryColor,
+  //             margin: const EdgeInsets.all(1),
+  //             child: Center(
+  //                 child: Text(
+  //               'Sub Column $index',
+  //               style: textStyleSubItems,
+  //             )))));
 
-//   final Paint wickPaint, gainPaint, lossPaint;
-//   final double wickWidth = 1.0, candleWidth = 3.0;
+  //Creation header
+  ExpandableTableHeader header = ExpandableTableHeader(
+      firstCell: Container(
+          color: primaryColor,
+          margin: const EdgeInsets.all(1),
+          child: const Center(
+              child: Text(
+            'Breakdown',
+            style: textStyle,
+          ))),
+      children: List.generate(
+          col - 1,
+          (index) => Container(
+              color: primaryColor,
+              margin: const EdgeInsets.all(1),
+              child: Center(
+                  child: Text(
+                'Column $index',
+                style: textStyle,
+              )))));
 
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     // Generate candlesticks
-//     List<CandleStick> candleSticks = generateCandleSticks(size);
+  //Creation sub rows
+  // List<ExpandableTableRow> subTows1 = List.generate(
+  //     row,
+  //     (rowIndex) => ExpandableTableRow(
+  //           height: 10,
+  //           firstCell: Container(
+  //               color: primaryColor,
+  //               margin: const EdgeInsets.all(1),
+  //               child: Padding(
+  //                 padding: const EdgeInsets.only(left: 16.0),
+  //                 child: Text(
+  //                   'Sub Sub Row $rowIndex',
+  //                   style: textStyleSubItems,
+  //                 ),
+  //               )),
+  //           children: List<Widget>.generate(
+  //               col - 1,
+  //               (columnIndex) => Container(
+  //                   color: primaryColor,
+  //                   margin: const EdgeInsets.all(1),
+  //                   child: Center(
+  //                       child: Text(
+  //                     'Cell $rowIndex:$columnIndex',
+  //                     style: textStyleSubItems,
+  //                   )))),
+  //         ));
+  List<ExpandableTableRow> subRows = List.generate(
+      row,
+      (rowIndex) => ExpandableTableRow(
+            height: 50,
+            firstCell: Container(
+                color: primaryColor,
+                margin: const EdgeInsets.all(1),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      'Sub Row $rowIndex',
+                      style: textStyleSubItems,
+                    ),
+                  ),
+                )),
+            children: List<Widget>.generate(
+                col - 1,
+                (columnIndex) => Container(
+                    color: primaryColor,
+                    margin: const EdgeInsets.all(1),
+                    child: Center(
+                        child: Text(
+                      'Cell $rowIndex:$columnIndex',
+                      style: textStyleSubItems,
+                    )))),
+          ));
+  //Creation rows
+  List<ExpandableTableRow> rows = List.generate(
+      row,
+      (rowIndex) => ExpandableTableRow(
+            height: 50,
+            firstCell: Container(
+                color: primaryColor,
+                margin: const EdgeInsets.all(1),
+                child: Center(
+                    child: Text(
+                  'Row $rowIndex',
+                  style: textStyle,
+                ))),
+            legend: rowIndex == 0
+                ? Container(
+                    color: primaryColor,
+                    margin: const EdgeInsets.all(1),
+                    child: const Center(
+                      child: Text(
+                        'Expandible Row...',
+                        style: textStyle,
+                      ),
+                    ),
+                  )
+                : null,
+            children: rowIndex == 0
+                ? subRows
+                : List<Widget>.generate(
+                    col - 1,
+                    (columnIndex) => Container(
+                        color: primaryColor,
+                        margin: const EdgeInsets.all(1),
+                        child: Center(
+                            child: Text(
+                          'Cell $rowIndex:$columnIndex',
+                          style: textStyle,
+                        )))),
+          ));
 
-//     // Paint candlesticks
-//     for (CandleStick candleStick in candleSticks) {
-//       // Paint wick
-//       print(size.height.toString() + " " + candleStick.wickHighY.toString());
-//       canvas.drawRect(
-//           Rect.fromLTRB(
-//               candleStick.centerX - (wickWidth / 2),
-//               size.height - candleStick.wickHighY,
-//               candleStick.centerX + (wickWidth / 2),
-//               size.height - candleStick.wickLowY),
-//           wickPaint);
-//     }
-//   }
-
-//   @override
-//   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-
-//   List<CandleStick> generateCandleSticks(Size size) {
-//     newOpen = List<double>.generate(open.length, (index) {
-//       return open[index] == null ? 0 : double.parse(open[index].toString());
-//     });
-//     newClose = List<double>.generate(close.length, (index) {
-//       return close[index] == null ? 0 : double.parse(close[index].toString());
-//     });
-//     newHigh = List<double>.generate(close.length, (index) {
-//       return close[index] == null ? 0 : double.parse(close[index].toString());
-//     });
-//     newLow = List<double>.generate(close.length, (index) {
-//       return low[index] == null ? 0 : double.parse(low[index].toString());
-//     });
-
-//     lowest = getLowest(newLow);
-//     highest = getHighest(newHigh);
-
-//     print(highest);
-//     print(lowest);
-
-//     final pixelsPerWindow = size.width / (newOpen.length + 1);
-
-//     final pixelsPerDollar = size.height / (highest - lowest);
-
-//     print(pixelsPerDollar);
-
-//     final List<CandleStick> candleSticks = [];
-
-//     for (int i = 0; i < newOpen.length; i++) {
-//       candleSticks.add(CandleStick(
-//           centerX: (i + 1) * pixelsPerWindow,
-//           wickHighY: (newHigh[i] - lowest) * (pixelsPerDollar * 0.5),
-//           wickLowY: (newLow[i] - lowest) * pixelsPerDollar,
-//           candleHighY: (newOpen[i] - lowest) * pixelsPerDollar,
-//           candleLowY: (newClose[i] - lowest) * pixelsPerDollar,
-//           candlePaint: isGain(i) ? gainPaint : lossPaint));
-//     }
-
-//     return candleSticks;
-//   }
-
-//   getHighest(List<double> newHigh) {
-//     List<double> tempHigh =
-//         List<double>.generate(newHigh.length, (index) => newHigh[index]);
-
-//     tempHigh.sort();
-//     return tempHigh[tempHigh.length - 1];
-//   }
-
-//   getLowest(List<double> newLow) {
-//     List<double> tempLow =
-//         List<double>.generate(newLow.length, (index) => newLow[index]);
-
-//     tempLow.sort();
-//     return tempLow[0];
-//   }
-
-//   bool isGain(int i) {
-//     if (i == 0) {
-//       return true;
-//     } else {
-//       return newOpen[i] > newOpen[i - 1];
-//     }
-//   }
-// }
-
-// class CandleStick {
-//   final double centerX;
-//   final double wickHighY;
-//   final double wickLowY;
-//   final double candleHighY;
-//   final double candleLowY;
-//   final Paint candlePaint;
-
-//   CandleStick(
-//       {required this.centerX,
-//       required this.wickHighY,
-//       required this.wickLowY,
-//       required this.candleHighY,
-//       required this.candleLowY,
-//       required this.candlePaint});
-// }
+  return ExpandableTable(
+    headerHeight: 80,
+    rows: rows,
+    header: header,
+    scrollShadowColor: accentColor,
+  );
+}

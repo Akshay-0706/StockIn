@@ -16,11 +16,21 @@ class IndicesBody extends StatefulWidget {
   State<IndicesBody> createState() => _IndicesBodyState();
 }
 
-class _IndicesBodyState extends State<IndicesBody> {
+class _IndicesBodyState extends State<IndicesBody>
+    with SingleTickerProviderStateMixin {
   late Future<Indices> futureIndices;
   late Timer timer;
   Color positive = const Color(0xff00a25b), negative = const Color(0xfffc5a5a);
   String mode = "nse";
+  late TabController tabController;
+
+  // final selectedColor = Theme.of(context).primaryColorDark;
+  final unselectedColor = const Color(0xff5f6368);
+  final tabs = [
+    const Tab(text: 'NSE'),
+    const Tab(text: 'BSE'),
+  ];
+
   Map<int, int> cardWidth = {
     300: 1,
     400: 2,
@@ -42,11 +52,20 @@ class _IndicesBodyState extends State<IndicesBody> {
 
   @override
   void initState() {
+    tabController = TabController(length: 2, vsync: this);
+
     futureIndices = fetchIndices(mode);
 
     timer =
         Timer.periodic(const Duration(seconds: 1), (Timer t) => callStock());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer.cancel();
+    tabController.dispose();
   }
 
   int getCardNumbers() {
@@ -97,29 +116,34 @@ class _IndicesBodyState extends State<IndicesBody> {
               ],
             ),
             SizedBox(height: getHeight(10)),
-            // DefaultTabController(
-            //     length: 2,
-            //     child: Scaffold(
-            //       appBar: AppBar(
-            //         bottom: const TabBar(tabs: [
-            //           Tab(
-            //             text: "NSE",
-            //           ),
-            //           Tab(
-            //             text: "BSE",
-            //           ),
-            //         ]),
-            //       ),
-            //       body: TabBarView(
-            //         children: [
-
-            //         ],
-            //       ),
-            //     )),
+            Container(
+              width: getHeight(400),
+              height: getHeight(50),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: TabBar(
+                onTap: (value) {
+                  mode = value == 0 ? "nse" : "bse";
+                  // futureIndices = fetchIndices(mode);
+                  // callStock();
+                },
+                controller: tabController,
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Theme.of(context).primaryColor,
+                ),
+                labelColor: Theme.of(context).primaryColorDark,
+                unselectedLabelColor: Colors.black,
+                tabs: tabs,
+              ),
+            ),
+            SizedBox(height: getHeight(20)),
             FutureBuilder<Indices>(
               future: futureIndices,
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
+                if (!snapshot.hasData || snapshot.data!.type != mode) {
                   return const LinearProgressIndicator();
                 }
 
@@ -127,11 +151,11 @@ class _IndicesBodyState extends State<IndicesBody> {
                   behavior: ScrollConfiguration.of(context).copyWith(
                     dragDevices: {
                       PointerDeviceKind.touch,
-                      PointerDeviceKind.mouse,
+                      PointerDeviceKind.mouse
                     },
                   ),
                   child: SizedBox(
-                    height: SizeConfig.height * 0.93,
+                    height: SizeConfig.height * 0.85,
                     child: GridView.builder(
                         physics: const BouncingScrollPhysics(),
                         itemCount: snapshot.data!.indices.length,
@@ -160,16 +184,21 @@ class _IndicesBodyState extends State<IndicesBody> {
                               .toString());
 
                           late Color color;
+                          late double opacity;
                           if (percentageChange >= 1) {
                             color = positive;
+                            opacity = 1;
                           } else if (percentageChange <= -1) {
                             color = negative;
+                            opacity = 1;
                           } else {
                             if (percentageChange >= 0) {
                               color = positive.withOpacity(percentageChange);
+                              opacity = percentageChange;
                             } else {
                               color =
                                   negative.withOpacity(percentageChange * -1);
+                              opacity = percentageChange * -1;
                             }
                           }
 
@@ -181,18 +210,20 @@ class _IndicesBodyState extends State<IndicesBody> {
                                 borderRadius: BorderRadius.circular(8),
                                 // boxShadow: [
                                 //   BoxShadow(
-                                //     color: Colors.grey.withOpacity(0.1),
+                                //     color: Colors.grey.withOpacity(
+                                //         opacity > 0.5 ? 0.5 : opacity),
                                 //     spreadRadius: 5,
                                 //     blurRadius: 7,
                                 //     offset: Offset(2, 4),
                                 //   )
                                 // ],
-                                // border: Border.all(color: Theme.of(context).primaryColorDark)
+                                //border: Border.all(color: Theme.of(context).primaryColorDark)
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: [
                                     SizedBox(
                                       height: getHeight(50),
@@ -209,7 +240,7 @@ class _IndicesBodyState extends State<IndicesBody> {
                                         maxLines: 3,
                                       ),
                                     ),
-                                    const Spacer(),
+                                    // const Spacer(),
                                     Text(
                                       last.toString(),
                                       style: TextStyle(
@@ -217,7 +248,7 @@ class _IndicesBodyState extends State<IndicesBody> {
                                             Theme.of(context).primaryColorLight,
                                       ),
                                     ),
-                                    const Spacer(),
+                                    // const Spacer(),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
@@ -248,6 +279,7 @@ class _IndicesBodyState extends State<IndicesBody> {
                 );
               },
             ),
+            SizedBox(height: getHeight(20),)
           ],
         ),
       ),

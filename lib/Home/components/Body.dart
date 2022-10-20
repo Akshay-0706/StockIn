@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../Components/appDrawer.dart';
-import '../../Components/navBar.dart';
-import '../../size.dart';
-import 'first/first.dart';
+import '../../components/appDrawer.dart';
+import 'dashboard/first.dart';
 import 'second/second.dart';
 
 class HomeBody extends StatefulWidget {
@@ -14,30 +12,22 @@ class HomeBody extends StatefulWidget {
 }
 
 class _HomeBodyState extends State<HomeBody> {
+  int current = 0;
+
+  List<Widget> tabs = [DashBoard(), PortFolio()];
+
+  changeTab(int index) {
+    setState(() {
+      current = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const AppDrawer(),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: getHeight(20)),
-              const NavBar(),
-              SizedBox(height: getHeight(40)),
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Expanded(flex: 3, child: First()),
-                    Expanded(flex: 1, child: Second()),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        AppDrawer(changeTab: changeTab),
+        Expanded(child: tabs[current]),
       ],
     );
   }

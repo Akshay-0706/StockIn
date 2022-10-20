@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ThemeChanger with ChangeNotifier {
-  static bool isThemeDark = false;
+  static bool isThemeDark = true;
 
   bool isDarkMode() => isThemeDark;
 
@@ -16,7 +16,7 @@ class ThemeChanger with ChangeNotifier {
 }
 
 class NewTheme {
-  static ThemeData lightTheme()  {
+  static ThemeData lightTheme() {
     return ThemeData(
       fontFamily: "OverPass",
       brightness: Brightness.light,
@@ -80,9 +80,9 @@ class Global {
   static Color drawerBg = const Color.fromRGBO(248, 248, 248, 1);
 
   // Dark mode colors
-  static Color? primaryDark = Colors.greenAccent[400];
+  static Color? primaryDark = const Color.fromARGB(255, 29, 82, 134);
   static Color foregroundDark = Colors.white;
   static Color foregroundAltDark = Colors.white54;
-  static Color backgroundDark = const Color.fromARGB(255, 0, 10, 0);
-  static Color drawerBgDark = const Color.fromRGBO(20, 20, 20, 1);
+  static Color backgroundDark = const Color(0xFF131C2D).withOpacity(0.4);
+  static Color drawerBgDark = const Color(0xFF131C2D).withOpacity(0.4);
 }
