@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../components/appDrawer.dart';
-import 'dashboard/first.dart';
-import 'second/second.dart';
+import '../../size.dart';
+import 'dashboard/dashboard.dart';
+import 'portfolio/portfolio.dart';
 
 class HomeBody extends StatefulWidget {
   const HomeBody({Key? key}) : super(key: key);
@@ -13,6 +16,7 @@ class HomeBody extends StatefulWidget {
 
 class _HomeBodyState extends State<HomeBody> {
   int current = 0;
+  // bool shrink = SizeConfig.width <= 1200, tab = SizeConfig.width <= 950;
 
   List<Widget> tabs = [DashBoard(), PortFolio()];
 
@@ -20,6 +24,28 @@ class _HomeBodyState extends State<HomeBody> {
     setState(() {
       current = index;
     });
+  }
+
+  // late Timer timer;
+  @override
+  void initState() {
+    super.initState();
+    // timer = Timer.periodic(
+    //     const Duration(seconds: 1),
+    //     (Timer t) => setState(() {
+    //           print(SizeConfig.width);
+    //           if (SizeConfig.width <= 1200) {
+    //             shrink = true;
+    //           } else {
+    //             shrink = false;
+    //           }
+    //         }));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // timer.cancel();
   }
 
   @override

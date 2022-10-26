@@ -13,8 +13,9 @@ import '../../database/stock/chart.dart';
 import '../../size.dart';
 
 class StockBody extends StatefulWidget {
-  const StockBody({Key? key}) : super(key: key);
-  final String symbol = "SBIN.NS";
+  const StockBody({Key? key, required this.code, required this.name})
+      : super(key: key);
+  final String code, name;
 
   @override
   State<StockBody> createState() => _StockBodyState();
@@ -30,13 +31,13 @@ class _StockBodyState extends State<StockBody> {
 
   void callStock() async {
     setState(() {
-      futureStock = fetchStock(widget.symbol, selectedRange, selectedInterval);
+      futureStock = fetchStock(widget.code, selectedRange, selectedInterval);
     });
   }
 
   @override
   void initState() {
-    futureStock = fetchStock(widget.symbol, "1d", "1m");
+    futureStock = fetchStock(widget.code, "1d", "1m");
     futureFinances = fetchFinances();
 
     // timer =
@@ -88,7 +89,7 @@ class _StockBodyState extends State<StockBody> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.symbol,
+                            widget.code,
                             style: TextStyle(
                               color: Theme.of(context).primaryColorDark,
                               fontSize: getHeight(26),

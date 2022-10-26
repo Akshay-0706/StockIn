@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:stockin/global.dart';
+import 'package:stockin/size.dart';
 
 typedef QueryListItemBuilder<T> = Widget Function(T item);
 typedef OnItemSelected<T> = void Function(T item);
@@ -269,33 +271,38 @@ class MySingleChoiceSearchState<T> extends State<StockSearchBar<T?>> {
                                 onTap: onCloseOverlaySearchList,
                                 child: Icon(
                                   Icons.close,
-                                  size: 22,
+                                  size: getHeight(20),
                                   color: Theme.of(context).primaryColorDark,
                                 ),
                               ),
                             ),
-                            Container(
+                            SizedBox(
                               height: overlaySearchListHeight,
-                              child: Scrollbar(
-                                child: ListView.separated(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 4),
-                                  separatorBuilder: (context, index) =>
-                                      const Divider(
-                                    height: 1,
-                                  ),
-                                  itemBuilder: (context, index) => Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      onTap: () => onSearchListItemSelected(
-                                          _searchList[index]),
-                                      child:
-                                          widget.overlaySearchListItemBuilder(
-                                        _searchList.elementAt(index),
+                              child: ScrollConfiguration(
+                                behavior:
+                                    ScrollConfiguration.of(context).copyWith(
+                                  dragDevices: {
+                                    PointerDeviceKind.touch,
+                                    PointerDeviceKind.mouse,
+                                  },
+                                ),
+                                child: Scrollbar(
+                                  child: ListView.builder(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 4),
+                                    itemBuilder: (context, index) => Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: () => onSearchListItemSelected(
+                                            _searchList[index]),
+                                        child:
+                                            widget.overlaySearchListItemBuilder(
+                                          _searchList.elementAt(index),
+                                        ),
                                       ),
                                     ),
+                                    itemCount: _searchList.length,
                                   ),
-                                  itemCount: _searchList.length,
                                 ),
                               ),
                             ),
@@ -306,7 +313,7 @@ class MySingleChoiceSearchState<T> extends State<StockSearchBar<T?>> {
                               child: widget.noItemsFoundWidget,
                             )
                           : Container(
-                              child: const Text('No items found'),
+                              child: const Text('No stocks found'),
                             ),
                 ),
               ),

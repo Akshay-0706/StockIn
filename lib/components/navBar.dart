@@ -1,6 +1,8 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:stockin/args.dart';
 import 'package:stockin/components/stockSearchBar.dart';
 import 'package:stockin/global.dart';
 import 'package:stockin/size.dart';
@@ -27,7 +29,7 @@ class _NavBarState extends State<NavBar> {
     return Row(
       children: [
         SizedBox(
-          width: getHeight(400),
+          width: getWidth(150),
           child: StockSearchBar(
             searchList: queries,
             searchQueryBuilder: (query, list) {
@@ -45,35 +47,64 @@ class _NavBarState extends State<NavBar> {
                   children: [
                     Text(
                       (item as Map<String, String>).values.last,
-                      style: const TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 14),
                     ),
                     const Spacer(),
                     Text(
                       (item).values.first,
-                      style: const TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ],
                 ),
               );
             },
-            onItemSelected: (item) {
-              setState(() {
-                print('$item');
-              });
-            },
+            onItemSelected: (item) => Navigator.pushNamed(context, "/stock",
+                arguments: StockArgs((item as Map<String, String>).values.last,
+                    (item).values.first)),
           ),
         ),
         const Spacer(),
-        Text(
-          "Saturday, 10 September, 2022",
-          style: TextStyle(
-            fontSize: getHeight(14),
-            color: Theme.of(context).primaryColorDark,
-          ),
+        AnimatedTextKit(
+          repeatForever: true,
+          animatedTexts: [
+            ...List.generate(
+              GlobalParams.navBarQuotes.length,
+              (index) => TypewriterAnimatedText(
+                GlobalParams.navBarQuotes[index],
+                speed: const Duration(milliseconds: 50),
+                textStyle: TextStyle(
+                  fontSize: getHeight(18),
+                  color: Theme.of(context).primaryColorDark,
+                ),
+              ),
+            )
+          ],
+          onTap: () {
+            print("Tap Event");
+          },
         ),
-        SizedBox(
-          width: getHeight(20),
-        ),
+        // Text(
+        //   "StockIn",
+        //   style: TextStyle(
+        //     fontSize: getHeight(18),
+        //     color: Theme.of(context).primaryColorDark,
+        //   ),
+        // ),
+        // SizedBox(
+        //   width: getHeight(18),
+        // ),
+        // MouseRegion(
+        //   cursor: SystemMouseCursors.click,
+        //   child: GestureDetector(
+        //     onTap: () => themeChanger.changeTheme(),
+        //     child: FaIcon(
+        //       themeChanger.isDarkMode() ? FontAwesomeIcons.moon : Icons.sunny,
+        //       size: getHeight(18),
+        //       color: Theme.of(context).primaryColorDark,
+        //     ),
+        //   ),
+        // )
+
         // FaIcon(
         //   Icons.notifications_outlined,
         //   size: getHeight(24),
@@ -82,24 +113,24 @@ class _NavBarState extends State<NavBar> {
         // SizedBox(
         //   width: getHeight(20),
         // ),
-        Row(
-          children: [
-            FaIcon(
-              Icons.person,
-              size: getHeight(24),
-              color: Theme.of(context).primaryColorDark,
-            ),
-            SizedBox(
-              width: getHeight(10),
-            ),
-            Text(
-              "Akshay Vhatkar",
-              style: TextStyle(
-                  color: Theme.of(context).primaryColorDark,
-                  fontSize: getHeight(14)),
-            ),
-          ],
-        )
+        // Row(
+        //   children: [
+        //     // FaIcon(
+        //     //   Icons.person,
+        //     //   size: getHeight(24),
+        //     //   color: Theme.of(context).primaryColorDark,
+        //     // ),
+        //     // SizedBox(
+        //     //   width: getHeight(10),
+        //     // ),
+        //     Text(
+        //       "Akshay Vhatkar",
+        //       style: TextStyle(
+        //           color: Theme.of(context).primaryColorDark,
+        //           fontSize: getHeight(14)),
+        //     ),
+        //   ],
+        // )
       ],
     );
   }

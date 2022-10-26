@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "514700413031",
+    "project_id": "stock-in-a6ee1",
+    "storage_bucket": "stock-in-a6ee1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:514700413031:android:289ba327a1cd7e22166cc2",
+        "android_client_info": {
+          "package_name": "com.example.stockin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "514700413031-agui9us1hl0sndbqrb4lp4mbde11k7uh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKJiRGfuZ4EPZMol7aCHBxrOQi0JKXB94"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "514700413031-agui9us1hl0sndbqrb4lp4mbde11k7uh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "514700413031-v7jpr539h0qaeeaim5tpmml45450pdbu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.stockin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

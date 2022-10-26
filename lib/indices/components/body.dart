@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -133,8 +132,13 @@ class _IndicesBodyState extends State<IndicesBody>
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
                   color: Theme.of(context).primaryColor,
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF1CA7EC), Color(0xFF1F2F98)],
+                  ),
                 ),
-                labelColor: Theme.of(context).primaryColorDark,
+                labelColor: Colors.black,
                 unselectedLabelColor: Colors.black,
                 tabs: tabs,
               ),
@@ -279,7 +283,9 @@ class _IndicesBodyState extends State<IndicesBody>
                 );
               },
             ),
-            SizedBox(height: getHeight(20),)
+            SizedBox(
+              height: getHeight(20),
+            )
           ],
         ),
       ),

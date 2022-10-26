@@ -1,10 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:stockin/global.dart';
 
+import 'database/signIn.dart';
+import 'firebase_options.dart';
 import 'routes.dart';
 import 'theme.dart';
 
-void main() {
+Future<void> main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   runApp(const MyApp());
 }
 
@@ -16,12 +26,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // themeChanger.addListener(() {
+  //   //   setState(() {});
+  //   // });
+  // }
+
   @override
-  void initState() {
-    super.initState();
-    themeChanger.addListener(() {
-      setState(() {});
-    });
+  void dispose() {
+    super.dispose();
+    _signOut();
   }
 
   // This widget is the root of your application.
@@ -30,10 +46,12 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'StockIn',
-      theme: NewTheme.lightTheme(),
-      darkTheme: NewTheme.darkTheme(),
-      themeMode: themeChanger.currentTheme(),
+      theme: NewTheme.darkTheme(),
       routes: routes,
     );
   }
+}
+
+Future<void> _signOut() async {
+  await FirebaseAuth.instance.signOut();
 }

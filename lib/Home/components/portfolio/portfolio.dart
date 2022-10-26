@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../../global.dart';
 import '../../../size.dart';
 import 'quickPortfolio.dart';
 import 'recentPortfolio.dart';
@@ -11,20 +12,36 @@ class PortFolio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        top: getHeight(20),
-        left: getHeight(20),
-        right: getHeight(40),
-        bottom: getHeight(40),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          Top(),
-          Middle(),
-          Bottom(),
-        ],
+    return TweenAnimationBuilder(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: GlobalParams.duration,
+      builder: (context, double value, child) => Opacity(
+        opacity: value,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).backgroundColor,
+                  const Color(0xFF131C2D).withOpacity(0.7),
+                ],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: const [0.0, 1.0],
+                tileMode: TileMode.clamp),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(getHeight(40)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Top(),
+                Middle(),
+                Bottom()
+                // const Bottom(),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

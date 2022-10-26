@@ -1,9 +1,15 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:stockin/global.dart';
 
+import '../database/signIn.dart';
 import '../size.dart';
+import 'drawerMenu.dart';
+import 'loginButton.dart';
+import 'profileView.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({Key? key, required this.changeTab}) : super(key: key);
@@ -15,6 +21,9 @@ class AppDrawer extends StatefulWidget {
 
 class _AppDrawerState extends State<AppDrawer> {
   int current = 0;
+  bool shrink = SizeConfig.width <= 1200;
+  bool loggedIn = false, signing = false, isHovered = false;
+  User? user;
 
   List<String> tabs = ["Dashboard", "Portfolio", "Market", "News", "Settings"];
   List<String> tabIcons = [
@@ -24,142 +33,125 @@ class _AppDrawerState extends State<AppDrawer> {
     "news",
     "settings"
   ];
+  // late Timer timer;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   timer = Timer.periodic(
+  //       const Duration(seconds: 1),
+  //       (Timer t) => setState(() {
+  //             print(SizeConfig.width);
+  //             if (SizeConfig.width <= 1200) {
+  //               shrink = true;
+  //             } else {
+  //               shrink = false;
+  //             }
+  //           }));
+  // }
+
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   timer.cancel();
+  // }
+//  AnimationController linearAnimationController = AnimationController(
+//     duration: const Duration(milliseconds: 1500),
+//     vsync: this);
+
+// CurvedAnimation linearAnimation =
+//     CurvedAnimation(parent: linearAnimationController, curve: Curves.linear)
+//       ..addListener(() {
+//         setState(() {
+//           animationValue = linearAnimation.value * 360;
+//         });
+//       });
+// linearAnimationController.repeat();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: GlobalParams.duration,
       decoration: BoxDecoration(
         color: Theme.of(context).drawerTheme.backgroundColor,
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
+            color: Colors.black.withOpacity(0.9),
             spreadRadius: 5,
-            blurRadius: 5,
-            offset: Offset(0, 5),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: getHeight(20)),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(height: getHeight(40)),
+            if (loggedIn)
+              ProfileView(
+                shrink: shrink,
+                user: user,
+              ),
+            if (!loggedIn)
+              InkWell(
+                onTap: () async {
+                  setState(() {
+                    signing = true;
+                  });
+
+                  user = await SignInProvider.googleLogin();
+
+                  setState(() {
+                    loggedIn = true;
+                  });
+                },
+                onHover: (value) {
+                  setState(() {
+                    isHovered = value;
+                  });
+                },
+                borderRadius: BorderRadius.circular(4),
+                child: signing
+                    ? CircularProgressIndicator(
+                        strokeWidth: 2.0,
+                        color: Theme.of(context).primaryColor,
+                      )
+                    : LoginButton(isHovered: isHovered, shrink: shrink),
+              ),
             SizedBox(height: getHeight(20)),
-            Row(
-              children: [
-                SvgPicture.asset(
-                  "assets/icons/logo.svg",
-                  width: getHeight(18),
-                  color: Theme.of(context).primaryColorDark,
-                ),
-                SizedBox(width: getHeight(10)),
-                Text(
-                  "STOCKIN",
-                  style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyText1?.color,
-                      fontSize: getHeight(18),
-                      fontWeight: FontWeight.w600),
-                ),
-                SizedBox(width: getHeight(80)),
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () => themeChanger.changeTheme(),
-                    child: FaIcon(
-                      themeChanger.isDarkMode()
-                          ? FontAwesomeIcons.moon
-                          : Icons.sunny,
-                      size: getHeight(18),
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(height: getHeight(16)),
             Container(
-              color: Theme.of(context).primaryColorLight,
-              height: getHeight(2),
-              width: getHeight(200),
+              color: Colors.white.withOpacity(0.4),
+              width: shrink ? getHeight(30) : getHeight(150),
+              height: getHeight(1),
             ),
-            SizedBox(height: getHeight(32)),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ...List.generate(
-                    5,
-                    (index) => DrawerMenu(
-                        iconPath: "assets/icons/drawer/${tabIcons[index]}.svg",
-                        title: tabs[index],
-                        isSelected: current == index,
-                        tap: () {
-                          widget.changeTab(index);
-                          current = index;
-                        }))
-              ],
-            ),
-            const Spacer(),
-            Container(
-              color: Theme.of(context).primaryColorLight,
-              height: getHeight(2),
-              width: getHeight(200),
-            ),
-            SizedBox(height: getHeight(16)),
-            Text(
-              "Team AVSK",
-              style: TextStyle(
-                fontSize: getHeight(14),
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).primaryColorLight,
+            SizedBox(height: getHeight(14)),
+            Expanded(
+              flex: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...List.generate(
+                      5,
+                      (index) => DrawerMenu(
+                          iconPath: tabIcons[index],
+                          title: tabs[index],
+                          isSelected: current == index,
+                          shrink: shrink,
+                          tap: () {
+                            widget.changeTab(index);
+                            current = index;
+                          }))
+                ],
               ),
             ),
-            SizedBox(height: getHeight(16)),
+            const Spacer(),
           ],
         ),
       ),
-    );
-  }
-}
-
-class DrawerMenu extends StatelessWidget {
-  const DrawerMenu({
-    Key? key,
-    required this.iconPath,
-    required this.title,
-    required this.tap,
-    required this.isSelected,
-  }) : super(key: key);
-  final String iconPath, title;
-  final bool isSelected;
-  final GestureTapCallback tap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: tap,
-          child: MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  iconPath,
-                  width: getHeight(18),
-                  color: Theme.of(context).primaryColorDark,
-                ),
-                SizedBox(width: getHeight(10)),
-                Text(
-                  title,
-                  style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyText1?.color,
-                      fontSize: getHeight(16)),
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: getHeight(24)),
-      ],
     );
   }
 }

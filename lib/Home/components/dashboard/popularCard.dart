@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:stockin/args.dart';
 
 import '../../../size.dart';
 
 class PopularCard extends StatelessWidget {
   const PopularCard({
     Key? key,
+    required this.code,
+    required this.name,
   }) : super(key: key);
+  final String code, name;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () =>
-          Navigator.pushNamed(context, "/stock"),
+      onTap: () => Navigator.pushNamed(context, "/stock",
+          arguments: StockArgs(code, name)),
       borderRadius: BorderRadius.circular(8),
-      child: Ink(
-        width: getHeight(120),
+      child: Container(
+        width: getHeight(130),
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColorLight.withAlpha(10),
           borderRadius: BorderRadius.circular(8),
@@ -25,39 +29,39 @@ class PopularCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: getHeight(40),
-                height: getHeight(40),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).primaryColorLight.withAlpha(20),
-                ),
-                child: Center(
-                    child: FaIcon(
-                  FontAwesomeIcons.apple,
-                  size: getHeight(25),
-                  color: Theme.of(context).primaryColorDark,
-                )),
-              ),
-              SizedBox(height: getHeight(10)),
               Row(
                 children: [
+                  Container(
+                    width: getHeight(40),
+                    height: getHeight(40),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).primaryColorLight.withAlpha(20),
+                    ),
+                    child: Center(
+                        child: FaIcon(
+                      FontAwesomeIcons.apple,
+                      size: getHeight(25),
+                      color: Theme.of(context).primaryColorDark,
+                    )),
+                  ),
+                  SizedBox(width: getHeight(10)),
                   Text(
-                    "AAPL",
+                    code,
                     style: TextStyle(
                         color: Theme.of(context).primaryColorDark,
                         fontSize: getHeight(12),
                         fontWeight: FontWeight.w600),
                   ),
-                  SizedBox(width: getHeight(5)),
-                  Text(
-                    "Apple",
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorLight,
-                      fontSize: getHeight(10),
-                    ),
-                  ),
                 ],
+              ),
+              SizedBox(height: getHeight(10)),
+              Text(
+                name,
+                style: TextStyle(
+                  color: Theme.of(context).primaryColorLight,
+                  fontSize: getHeight(10),
+                ),
               ),
               SizedBox(height: getHeight(7)),
               Text(

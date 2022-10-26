@@ -16,24 +16,24 @@ class ThemeChanger with ChangeNotifier {
 }
 
 class NewTheme {
-  static ThemeData lightTheme() {
-    return ThemeData(
-      fontFamily: "OverPass",
-      brightness: Brightness.light,
-      appBarTheme: AppBarTheme(
-        elevation: 0,
-        backgroundColor: Global.background,
-        iconTheme: IconThemeData(color: Global.foreground),
-      ),
-      drawerTheme: DrawerThemeData(backgroundColor: Global.drawerBg),
-      textTheme: lightTextTheme(),
-      scaffoldBackgroundColor: Global.background,
-      backgroundColor: Global.background,
-      primaryColor: Global.primary,
-      primaryColorLight: Global.foregroundAlt,
-      primaryColorDark: Global.foreground,
-    );
-  }
+  // static ThemeData lightTheme() {
+  //   return ThemeData(
+  //     fontFamily: "OverPass",
+  //     brightness: Brightness.light,
+  //     appBarTheme: AppBarTheme(
+  //       elevation: 0,
+  //       backgroundColor: Global.background,
+  //       iconTheme: IconThemeData(color: Global.foreground),
+  //     ),
+  //     drawerTheme: DrawerThemeData(backgroundColor: Global.drawerBg),
+  //     textTheme: lightTextTheme(),
+  //     scaffoldBackgroundColor: Global.background,
+  //     backgroundColor: Global.background,
+  //     primaryColor: Global.primary,
+  //     primaryColorLight: Global.foregroundAlt,
+  //     primaryColorDark: Global.foreground,
+  //   );
+  // }
 
   static ThemeData darkTheme() {
     return ThemeData(
@@ -54,14 +54,14 @@ class NewTheme {
     );
   }
 
-  static TextTheme lightTextTheme() {
-    return TextTheme(
-      headline1: TextStyle(color: Global.primary),
-      // headline2: TextStyle(color: Global.primaryAlt),
-      bodyText1: TextStyle(color: Global.foreground),
-      bodyText2: TextStyle(color: Global.foregroundAlt),
-    );
-  }
+  // static TextTheme lightTextTheme() {
+  //   return TextTheme(
+  //     headline1: TextStyle(color: Global.primary),
+  //     // headline2: TextStyle(color: Global.primaryAlt),
+  //     bodyText1: TextStyle(color: Global.foreground),
+  //     bodyText2: TextStyle(color: Global.foregroundAlt),
+  //   );
+  // }
 
   static TextTheme darkTextTheme() => TextTheme(
         headline1: TextStyle(color: Global.primaryDark),
@@ -73,16 +73,29 @@ class NewTheme {
 
 class Global {
   // Light mode colors
-  static Color primary = const Color(0xff42C2FF);
-  static Color foreground = Colors.black;
-  static Color foregroundAlt = Colors.black54;
-  static Color background = Colors.white;
-  static Color drawerBg = const Color.fromRGBO(248, 248, 248, 1);
+  // static Color primary = const Color(0xff42C2FF);
+  // static Color foreground = Colors.black;
+  // static Color foregroundAlt = Colors.black54;
+  // static Color background = Colors.white;
+  // static Color drawerBg = const Color.fromRGBO(248, 248, 248, 1);
 
   // Dark mode colors
-  static Color? primaryDark = const Color.fromARGB(255, 29, 82, 134);
+  static Color? primaryDark = const Color(0xFF1CA7EC);
   static Color foregroundDark = Colors.white;
   static Color foregroundAltDark = Colors.white54;
-  static Color backgroundDark = const Color(0xFF131C2D).withOpacity(0.4);
+  static Color backgroundDark = const Color.fromRGBO(11, 15, 25, 1);
   static Color drawerBgDark = const Color(0xFF131C2D).withOpacity(0.4);
+}
+
+class IndexColors {
+  // Stock colors
+  static List<Color> colors = [
+    const Color(0xFFEBA49C),
+    const Color(0xFFF04394),
+    const Color(0xFFF9C449),
+    const Color(0xFF7BD5F5),
+    const Color(0xFF7B7FF6),
+    const Color(0xFF1CA7EC),
+    const Color(0xFF1F2F98),
+  ];
 }
