@@ -1,17 +1,14 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:stockin/args.dart';
 import 'package:stockin/components/stockSearchBar.dart';
 import 'package:stockin/global.dart';
 import 'package:stockin/size.dart';
-import 'package:stockin/theme.dart';
 
 import '../database/data/stocks.dart';
 
 class NavBar extends StatefulWidget {
-  const NavBar({Key? key}) : super(key: key);
+  const NavBar({Key? key, required this.changeTab}) : super(key: key);
+  final Function changeTab;
 
   @override
   State<NavBar> createState() => _NavBarState();
@@ -20,10 +17,6 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   TextEditingController textEditingController = TextEditingController();
 
-  void searchStock(String text) {
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -31,7 +24,7 @@ class _NavBarState extends State<NavBar> {
         SizedBox(
           width: getWidth(150),
           child: StockSearchBar(
-            searchList: queries,
+            searchList: stocks,
             searchQueryBuilder: (query, list) {
               return list
                   .where((item) => item
@@ -58,9 +51,8 @@ class _NavBarState extends State<NavBar> {
                 ),
               );
             },
-            onItemSelected: (item) => Navigator.pushNamed(context, "/stock",
-                arguments: StockArgs((item as Map<String, String>).values.last,
-                    (item).values.first)),
+            onItemSelected: (item) => widget.changeTab(3, true,
+                (item as Map<String, String>).values.last, (item).values.first),
           ),
         ),
         const Spacer(),
@@ -79,9 +71,6 @@ class _NavBarState extends State<NavBar> {
               ),
             )
           ],
-          onTap: () {
-            print("Tap Event");
-          },
         ),
         // Text(
         //   "StockIn",

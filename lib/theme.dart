@@ -44,6 +44,11 @@ class NewTheme {
         backgroundColor: Global.backgroundDark,
         iconTheme: IconThemeData(color: Global.foregroundDark),
       ),
+      cardTheme: CardTheme(
+        color: const Color(0xFF131C2D).withOpacity(0.7),
+        shadowColor: Global.drawerBgDark,
+        elevation: 4,
+      ),
       drawerTheme: DrawerThemeData(backgroundColor: Global.drawerBgDark),
       textTheme: darkTextTheme(),
       scaffoldBackgroundColor: Global.backgroundDark,

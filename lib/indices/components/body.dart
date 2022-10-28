@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stockin/size.dart';
 
-import '../../database/stock/api.dart';
-import '../../database/stock/indices.dart';
+import '../../database/server/api.dart';
+import '../../database/server/indices.dart';
 
 class IndicesBody extends StatefulWidget {
   const IndicesBody({super.key});
@@ -96,15 +96,8 @@ class _IndicesBodyState extends State<IndicesBody>
           children: [
             SizedBox(height: getHeight(20)),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(width: getHeight(10)),
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const FaIcon(Icons.arrow_back_ios),
-                  ),
-                ),
                 SizedBox(width: getHeight(10)),
                 Text(
                   "Indices",

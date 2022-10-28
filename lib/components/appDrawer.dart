@@ -12,26 +12,35 @@ import 'loginButton.dart';
 import 'profileView.dart';
 
 class AppDrawer extends StatefulWidget {
-  const AppDrawer({Key? key, required this.changeTab}) : super(key: key);
+  const AppDrawer({Key? key, required this.changeTab, required this.current})
+      : super(key: key);
   final Function changeTab;
+  final int current;
 
   @override
   State<AppDrawer> createState() => _AppDrawerState();
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-  int current = 0;
   bool shrink = SizeConfig.width <= 1200;
   bool loggedIn = false, signing = false, isHovered = false;
   User? user;
 
-  List<String> tabs = ["Dashboard", "Portfolio", "Market", "News", "Settings"];
+  List<String> tabs = [
+    "Dashboard",
+    "Portfolio",
+    "Indices",
+    "Stocks",
+    "Watchlist",
+    "About us"
+  ];
   List<String> tabIcons = [
     "dashboard",
     "portfolio",
     "market",
+    "market",
+    "market",
     "news",
-    "settings"
   ];
   // late Timer timer;
 
@@ -135,16 +144,13 @@ class _AppDrawerState extends State<AppDrawer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ...List.generate(
-                      5,
+                      tabs.length,
                       (index) => DrawerMenu(
                           iconPath: tabIcons[index],
                           title: tabs[index],
-                          isSelected: current == index,
+                          isSelected: widget.current == index,
                           shrink: shrink,
-                          tap: () {
-                            widget.changeTab(index);
-                            current = index;
-                          }))
+                          tap: () => widget.changeTab(index, false)))
                 ],
               ),
             ),

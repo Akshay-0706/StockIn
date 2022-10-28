@@ -6,10 +6,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_table/flutter_expandable_table.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:stockin/database/stock/api.dart';
-import 'package:stockin/database/stock/finances.dart';
+import 'package:stockin/database/server/api.dart';
+import 'package:stockin/database/server/stocks.dart';
 
-import '../../database/stock/chart.dart';
+import '../../database/server/chart.dart';
 import '../../size.dart';
 
 class StockBody extends StatefulWidget {
@@ -23,7 +23,7 @@ class StockBody extends StatefulWidget {
 
 class _StockBodyState extends State<StockBody> {
   late Future<Chart> futureStock;
-  late Future<Finances> futureFinances;
+  late Future<Stocks> futureFinances;
   late Timer timer;
   late double regularMarketPrice = 0;
   String selectedRange = "1d", selectedInterval = "1m";
@@ -31,24 +31,25 @@ class _StockBodyState extends State<StockBody> {
 
   void callStock() async {
     setState(() {
-      futureStock = fetchStock(widget.code, selectedRange, selectedInterval);
+      futureStock =
+          fetchStock("${widget.code}.NS", selectedRange, selectedInterval);
     });
   }
 
   @override
   void initState() {
-    futureStock = fetchStock(widget.code, "1d", "1m");
+    futureStock = fetchStock("${widget.code}.NS", "1d", "1m");
     futureFinances = fetchFinances();
 
-    // timer =
-    //     Timer.periodic(const Duration(seconds: 1), (Timer t) => callStock());
+    timer =
+        Timer.periodic(const Duration(seconds: 1), (Timer t) => callStock());
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-    // timer.cancel();
+    timer.cancel();
   }
 
   @override
@@ -69,48 +70,29 @@ class _StockBodyState extends State<StockBody> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: FaIcon(
-                          Icons.arrow_back_ios_rounded,
-                          size: getHeight(25),
-                          color: Theme.of(context).primaryColorDark,
-                        ),
+                    Text(
+                      widget.name,
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColorDark,
+                        fontSize: getHeight(26),
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(width: getHeight(20)),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.code,
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColorDark,
-                              fontSize: getHeight(26),
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          SizedBox(height: getHeight(10)),
-                          FutureBuilder<Chart>(
-                            future: futureStock,
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return const LinearProgressIndicator();
-                              }
-                              ranges = List<String>.generate(
-                                  snapshot.data!.validRanges.length,
-                                  (index) => snapshot.data!.validRanges[index]);
-                              return setRegularMarketPrice(snapshot);
-                            },
-                          ),
-                        ],
-                      ),
+                    SizedBox(height: getHeight(10)),
+                    FutureBuilder<Chart>(
+                      future: futureStock,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const LinearProgressIndicator();
+                        }
+                        ranges = List<String>.generate(
+                            snapshot.data!.validRanges.length,
+                            (index) => snapshot.data!.validRanges[index]);
+                        return setRegularMarketPrice(snapshot);
+                      },
                     ),
                   ],
                 ),
@@ -155,16 +137,16 @@ class _StockBodyState extends State<StockBody> {
                     return chartCreater(snapshot);
                   },
                 ),
-                SizedBox(height: getHeight(20)),
-                FutureBuilder<Finances>(
-                  future: futureFinances,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const LinearProgressIndicator();
-                    }
-                    return Expanded(child: buildExpandableTable());
-                  },
-                ),
+                // SizedBox(height: getHeight(20)),
+                // FutureBuilder<Finances>(
+                //   future: futureFinances,
+                //   builder: (context, snapshot) {
+                //     if (!snapshot.hasData) {
+                //       return const LinearProgressIndicator();
+                //     }
+                //     return Expanded(child: buildExpandableTable());
+                //   },
+                // ),
               ],
             ),
           ),
