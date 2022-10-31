@@ -3,14 +3,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stockin/global.dart';
 import 'package:stockin/size.dart';
 
-class LoginButton extends StatelessWidget {
-  const LoginButton({
+class Button extends StatelessWidget {
+  const Button({
     Key? key,
     required this.isHovered,
-    required this.shrink,
+    required this.shrink, required this.icon,
   }) : super(key: key);
 
   final bool isHovered, shrink;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,7 @@ class LoginButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             FaIcon(
-              FontAwesomeIcons.arrowRightToBracket,
+              icon,
               size: getHeight(16),
             ),
             if (!shrink)

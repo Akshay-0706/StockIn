@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockin/global.dart';
 
 import '../database/signIn.dart';
@@ -22,8 +24,17 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-  bool shrink = SizeConfig.width <= 1200;
-  bool loggedIn = false, signing = false, isHovered = false;
+  final Future<SharedPreferences> sharedPrefInstance =
+      SharedPreferences.getInstance();
+  late SharedPreferences pref;
+  bool prefIsReady = false, shrink = SizeConfig.width <= 1200;
+  late bool loggedIn;
+  bool logginIn = false,
+      logginOut = false,
+      deleting = false,
+      isLoginHovered = false,
+      isLogoutHovered = false,
+      isDeleteHovered = false;
   User? user;
 
   List<String> tabs = [
@@ -31,7 +42,6 @@ class _AppDrawerState extends State<AppDrawer> {
     "Portfolio",
     "Indices",
     "Stocks",
-    "Watchlist",
     "About us"
   ];
   List<String> tabIcons = [
@@ -44,20 +54,29 @@ class _AppDrawerState extends State<AppDrawer> {
   ];
   // late Timer timer;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   timer = Timer.periodic(
-  //       const Duration(seconds: 1),
-  //       (Timer t) => setState(() {
-  //             print(SizeConfig.width);
-  //             if (SizeConfig.width <= 1200) {
-  //               shrink = true;
-  //             } else {
-  //               shrink = false;
-  //             }
-  //           }));
-  // }
+  @override
+  void initState() {
+    sharedPrefInstance.then((value) {
+      pref = value;
+      setState(() {
+        prefIsReady = true;
+        loggedIn = pref.containsKey("email");
+      });
+    });
+
+    super.initState();
+
+    // timer = Timer.periodic(
+    //     const Duration(seconds: 1),
+    //     (Timer t) => setState(() {
+    //           print(SizeConfig.width);
+    //           if (SizeConfig.width <= 1200) {
+    //             shrink = true;
+    //           } else {
+    //             shrink = false;
+    //           }
+    //         }));
+  }
 
   // @override
   // void dispose() {
@@ -100,36 +119,42 @@ class _AppDrawerState extends State<AppDrawer> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: getHeight(40)),
-            if (loggedIn)
-              ProfileView(
-                shrink: shrink,
-                user: user,
-              ),
-            if (!loggedIn)
+            if (!prefIsReady) const CircularProgressIndicator(),
+            if (prefIsReady && loggedIn)
+              ProfileView(shrink: shrink, pref: pref),
+            if (prefIsReady && !loggedIn)
               InkWell(
                 onTap: () async {
                   setState(() {
-                    signing = true;
+                    logginIn = true;
                   });
 
                   user = await SignInProvider.googleLogin();
 
+                  pref.setString("email", user!.email!);
+                  pref.setString("name", user!.displayName!);
+                  pref.setString("image", user!.photoURL!);
+
                   setState(() {
                     loggedIn = true;
+                    logginIn = false;
                   });
                 },
                 onHover: (value) {
                   setState(() {
-                    isHovered = value;
+                    isLoginHovered = value;
                   });
                 },
                 borderRadius: BorderRadius.circular(4),
-                child: signing
+                child: logginIn
                     ? CircularProgressIndicator(
                         strokeWidth: 2.0,
                         color: Theme.of(context).primaryColor,
                       )
-                    : LoginButton(isHovered: isHovered, shrink: shrink),
+                    : Button(
+                        icon: FontAwesomeIcons.arrowRightToBracket,
+                        isHovered: isLoginHovered,
+                        shrink: shrink),
               ),
             SizedBox(height: getHeight(20)),
             Container(
@@ -155,6 +180,66 @@ class _AppDrawerState extends State<AppDrawer> {
               ),
             ),
             const Spacer(),
+            if (prefIsReady && loggedIn)
+              Wrap(
+                direction: shrink ? Axis.vertical : Axis.horizontal,
+                spacing: getHeight(20),
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      setState(() {
+                        logginOut = true;
+                      });
+                      await SignInProvider.googleLogout();
+                      setState(() {
+                        logginOut = false;
+                        loggedIn = false;
+                      });
+                    },
+                    onHover: (value) {
+                      setState(() {
+                        isLogoutHovered = value;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(4),
+                    child: logginOut
+                        ? const CircularProgressIndicator()
+                        : Button(
+                            icon: FontAwesomeIcons.arrowRightFromBracket,
+                            isHovered: isLogoutHovered,
+                            shrink: true,
+                          ),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      setState(() {
+                        deleting = true;
+                      });
+                      // print("Email: ")
+                      await SignInProvider.googleDelete(
+                          pref.getString("email")!);
+                      setState(() {
+                        deleting = false;
+                        loggedIn = false;
+                      });
+                    },
+                    onHover: (value) {
+                      setState(() {
+                        isDeleteHovered = value;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(4),
+                    child: deleting
+                        ? const CircularProgressIndicator()
+                        : Button(
+                            icon: Icons.delete,
+                            isHovered: isDeleteHovered,
+                            shrink: true,
+                          ),
+                  ),
+                ],
+              ),
+            SizedBox(height: getHeight(20)),
           ],
         ),
       ),

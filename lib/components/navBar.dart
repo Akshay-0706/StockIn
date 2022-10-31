@@ -25,6 +25,7 @@ class _NavBarState extends State<NavBar> {
           width: getWidth(150),
           child: StockSearchBar(
             searchList: stocks,
+            hintText: "Search for Stocks",
             searchQueryBuilder: (query, list) {
               return list
                   .where((item) => item

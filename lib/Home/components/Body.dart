@@ -25,7 +25,6 @@ class _HomeBodyState extends State<HomeBody> {
     const PortFolio(),
     const Indices(),
     const Indices(),
-    const Watchlist(),
     const About()
   ];
 

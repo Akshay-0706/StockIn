@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '514700413031',
     projectId: 'stock-in-a6ee1',
     storageBucket: 'stock-in-a6ee1.appspot.com',
-    iosClientId: '514700413031-v7jpr539h0qaeeaim5tpmml45450pdbu.apps.googleusercontent.com',
+    iosClientId:
+        '514700413031-v7jpr539h0qaeeaim5tpmml45450pdbu.apps.googleusercontent.com',
     iosBundleId: 'com.example.stockin',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '514700413031',
     projectId: 'stock-in-a6ee1',
     storageBucket: 'stock-in-a6ee1.appspot.com',
-    iosClientId: '514700413031-v7jpr539h0qaeeaim5tpmml45450pdbu.apps.googleusercontent.com',
+    iosClientId:
+        '514700413031-v7jpr539h0qaeeaim5tpmml45450pdbu.apps.googleusercontent.com',
     iosBundleId: 'com.example.stockin',
   );
 }

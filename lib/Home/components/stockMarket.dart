@@ -21,16 +21,6 @@ class StockMarket extends StatelessWidget {
     {"code": "SBIN.NS", "name": "State Bank of India"},
   ];
 
-  final List<Gradient> indexGradients = [
-    LinearGradient(colors: [IndexColors.colors[0], IndexColors.colors[1]]),
-    LinearGradient(colors: [IndexColors.colors[1], IndexColors.colors[2]]),
-    LinearGradient(colors: [IndexColors.colors[2], IndexColors.colors[0]]),
-    LinearGradient(colors: [IndexColors.colors[3], IndexColors.colors[4]]),
-    LinearGradient(colors: [IndexColors.colors[5], IndexColors.colors[6]]),
-    LinearGradient(colors: [IndexColors.colors[6], IndexColors.colors[3]]),
-    LinearGradient(colors: [IndexColors.colors[0], IndexColors.colors[1]]),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -94,7 +84,7 @@ class StockMarket extends StatelessWidget {
                   itemBuilder: (context, index) => IndexCard(
                         code: topIndices[index].entries.first.value,
                         name: topIndices[index].entries.last.value,
-                        gradient: indexGradients[index],
+                        gradient: IndexColors.indexGradients[index],
                       ),
                   separatorBuilder: (context, index) =>
                       SizedBox(width: getHeight(20)),

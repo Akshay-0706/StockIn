@@ -23,7 +23,6 @@ class StockBody extends StatefulWidget {
 
 class _StockBodyState extends State<StockBody> {
   late Future<Chart> futureStock;
-  late Future<Stocks> futureFinances;
   late Timer timer;
   late double regularMarketPrice = 0;
   String selectedRange = "1d", selectedInterval = "1m";
@@ -32,14 +31,13 @@ class _StockBodyState extends State<StockBody> {
   void callStock() async {
     setState(() {
       futureStock =
-          fetchStock("${widget.code}.NS", selectedRange, selectedInterval);
+          fetchChart("${widget.code}.NS", selectedRange, selectedInterval);
     });
   }
 
   @override
   void initState() {
-    futureStock = fetchStock("${widget.code}.NS", "1d", "1m");
-    futureFinances = fetchFinances();
+    futureStock = fetchChart("${widget.code}.NS", "1d", "1m");
 
     timer =
         Timer.periodic(const Duration(seconds: 1), (Timer t) => callStock());

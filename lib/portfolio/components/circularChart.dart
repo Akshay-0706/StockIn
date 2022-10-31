@@ -1,6 +1,4 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:stockin/size.dart';
+import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../database/data/investedStocks.dart';
@@ -52,7 +50,7 @@ class _CiruclarChartState extends State<CiruclarChart> {
       DoughnutSeries<CircularStocks, String>(
         dataSource: widget.investedStocks,
         xValueMapper: (CircularStocks data, _) => data.stockName,
-        yValueMapper: (CircularStocks data, _) => data.investedAmt,
+        yValueMapper: (CircularStocks data, _) => data.investedPartition,
         startAngle: 90,
         endAngle: 90,
         dataLabelSettings: const DataLabelSettings(

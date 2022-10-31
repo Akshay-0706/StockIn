@@ -1,12 +1,25 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
+
+import 'package:flutter/material.dart';
+
+import '../../size.dart';
 
 class WatchlistBody extends StatelessWidget {
   const WatchlistBody({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Text("WatchList");
+    return Column(
+      children: [
+        Text(
+          "Watchlist",
+          style: TextStyle(
+            color: Theme.of(context).primaryColor,
+            fontSize: getHeight(32),
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
   }
 }

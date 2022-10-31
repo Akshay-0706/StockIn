@@ -1,23 +1,34 @@
 class Stocks {
-  final List<Map<String, dynamic>> stocks;
+  final List<StockInvested> investedStocks;
 
-  Stocks(this.stocks);
+  Stocks(this.investedStocks);
 
-  factory Stocks.fromJson(List<dynamic> json) {
-    List<Map<String, dynamic>> stocks = [];
+  factory Stocks.fromJson(Map<String, dynamic> json) {
+    List<StockInvested> investedStocks = [];
+    late double byPrice, qty;
 
-    for (var element in json) {
-      stocks.add(element as Map<String, dynamic>);
-    }
+    json.forEach((key, value) {
+      Map<String, dynamic> entry = value as Map<String, dynamic>;
+      entry.forEach((key, value) {
+        if (key == "byPrice") {
+          byPrice = double.parse(value.toString());
+        } else {
+          qty = double.parse(value.toString());
+        }
+      });
+      investedStocks.add(
+          StockInvested(key, qty, byPrice, qty * byPrice, 0, 0, 0, 0, 0, 0));
+    });
 
-    return Stocks(stocks);
+    return Stocks(investedStocks);
   }
 }
 
 class StockInvested {
-  final String code;
-  final double qty, buyAvg, buyValue, ltp, presentValue, pnl, pnlChg;
+  final String symbol;
+  final double qty, buyAvg, buyValue;
+  double ltp, prevClose, presentValue, pnl, pnlChg, todaysPnl;
 
-  StockInvested(this.code, this.qty, this.buyAvg, this.buyValue, this.ltp, this.presentValue, this.pnl, this.pnlChg);
-  
+  StockInvested(this.symbol, this.qty, this.buyAvg, this.buyValue, this.ltp,
+      this.prevClose, this.presentValue, this.pnl, this.pnlChg, this.todaysPnl);
 }

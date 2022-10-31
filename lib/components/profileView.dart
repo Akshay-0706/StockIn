@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockin/database/signIn.dart';
 
 import '../size.dart';
@@ -9,11 +10,11 @@ class ProfileView extends StatelessWidget {
   const ProfileView({
     Key? key,
     required this.shrink,
-    required this.user,
+    required this.pref,
   }) : super(key: key);
 
   final bool shrink;
-  final User? user;
+  final SharedPreferences pref;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class ProfileView extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.network(
-              user!.photoURL!,
+              pref.getString("image")!,
               fit: BoxFit.cover,
             ),
           ),
@@ -52,7 +53,7 @@ class ProfileView extends StatelessWidget {
                 ),
               ),
               Text(
-                user!.displayName!,
+                pref.getString("name")!,
                 overflow: TextOverflow.clip,
                 style: TextStyle(
                   color: Theme.of(context).primaryColorDark,

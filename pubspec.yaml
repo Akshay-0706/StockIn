@@ -41,14 +41,16 @@ dependencies:
   syncfusion_flutter_gauges: ^20.3.52
   syncfusion_flutter_charts: ^20.3.52
   http: ^0.13.5
+  url_launcher: ^6.1.6
   candlesticks: ^2.1.0
   dropdown_button2: ^1.8.1
   flutter_expandable_table: ^1.1.1
   google_sign_in: ^5.4.2
-  firebase_core: ^2.1.0
   provider: ^6.0.4
+  firebase_core: ^2.1.1
   firebase_auth: ^4.0.2
   firebase_database: ^10.0.2
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

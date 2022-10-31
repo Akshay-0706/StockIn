@@ -150,8 +150,10 @@ class MarketMood extends StatelessWidget {
                 ),
               ),
               SizedBox(height: getHeight(40)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Wrap(
+                runAlignment: WrapAlignment.spaceAround,
+                spacing: getHeight(20),
+                runSpacing: getHeight(20),
                 children: const [
                   MMIInfoCards(
                     borderColor: Colors.greenAccent,

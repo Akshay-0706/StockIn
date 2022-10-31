@@ -49,14 +49,9 @@ class DashBoard extends StatelessWidget {
                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    NavBar(
-                      changeTab: changeTab,
-                    ),
+                    NavBar(changeTab: changeTab),
                     SizedBox(height: getHeight(40)),
-                    MarketMood(
-                      context: context,
-                      marketMood: 587,
-                    ),
+                    MarketMood(context: context, marketMood: 50),
                     SizedBox(height: getHeight(20)),
                     StockMarket(changeTab: changeTab),
                     SizedBox(height: getHeight(40)),

@@ -23,6 +23,7 @@ class StockSearchBar<T> extends StatefulWidget {
     this.overlaySearchListHeight,
     this.noItemsFoundWidget,
     this.searchBoxInputDecoration,
+    required this.hintText,
   }) : super(key: key);
 
   /// List of text or [Widget] reference for users
@@ -51,6 +52,9 @@ class StockSearchBar<T> extends StatefulWidget {
 
   /// defines the input controller of searchBox
   final TextEditingController? controller;
+
+  /// hint text of searchBox
+  final String hintText;
 
   @override
   MySingleChoiceSearchState<T> createState() => MySingleChoiceSearchState<T>();
@@ -144,41 +148,37 @@ class MySingleChoiceSearchState<T> extends State<StockSearchBar<T?>> {
     overlaySearchListHeight = widget.overlaySearchListHeight ??
         MediaQuery.of(context).size.height / 4;
 
-    searchBox = Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      margin: const EdgeInsets.only(bottom: 12),
-      child: TextField(
-        controller: textController,
-        focusNode: _focusNode,
-        style:
-            TextStyle(fontSize: 16, color: Theme.of(context).primaryColorDark),
-        decoration: widget.searchBoxInputDecoration ??
-            InputDecoration(
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Color(0x4437474F),
-                ),
+    searchBox = TextField(
+      controller: textController,
+      focusNode: _focusNode,
+      style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColorDark),
+      decoration: widget.searchBoxInputDecoration ??
+          InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Theme.of(context).primaryColor.withOpacity(0.4),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              suffixIcon: Icon(
-                Icons.search,
-                color: Theme.of(context).primaryColorLight,
-              ),
-              border: InputBorder.none,
-              hintText: 'Search for Stock',
-              hintStyle: TextStyle(color: Theme.of(context).primaryColorLight),
-              contentPadding: const EdgeInsets.only(
-                left: 16,
-                right: 20,
-                top: 14,
-                bottom: 14,
-              ),
+              borderRadius: BorderRadius.circular(8),
             ),
-      ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Theme.of(context).primaryColor,
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            suffixIcon: Icon(
+              Icons.search,
+              color: Theme.of(context).primaryColorLight,
+            ),
+            border: InputBorder.none,
+            hintText: widget.hintText,
+            hintStyle: TextStyle(color: Theme.of(context).primaryColorLight),
+            contentPadding: const EdgeInsets.only(
+              left: 16,
+              top: 14,
+              bottom: 14,
+            ),
+          ),
     );
 
     final searchBoxBody = Column(
