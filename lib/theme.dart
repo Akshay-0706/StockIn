@@ -88,7 +88,7 @@ class Global {
   static Color? primaryDark = const Color(0xFF1CA7EC);
   static Color foregroundDark = Colors.white;
   static Color foregroundAltDark = Colors.white54;
-  static Color backgroundDark = const Color.fromRGBO(11, 15, 25, 1);
+  static Color backgroundDark = const Color(0xFF0B0F19);
   static Color drawerBgDark = const Color(0xFF131C2D).withOpacity(0.4);
 }
 

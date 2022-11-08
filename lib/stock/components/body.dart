@@ -27,6 +27,7 @@ class _StockBodyState extends State<StockBody> {
   late double regularMarketPrice = 0;
   String selectedRange = "1d", selectedInterval = "1m";
   late List<String> ranges = [];
+  bool stockIsReady = false;
 
   void callStock() async {
     setState(() {
@@ -37,7 +38,12 @@ class _StockBodyState extends State<StockBody> {
 
   @override
   void initState() {
-    futureStock = fetchChart("${widget.code}.NS", "1d", "1m");
+    futureStock = fetchChart("${widget.code}.NS", "1d", "1m").then((value) {
+      setState(() {
+        stockIsReady = true;
+      });
+      return value;
+    });
 
     timer =
         Timer.periodic(const Duration(seconds: 1), (Timer t) => callStock());
@@ -61,93 +67,92 @@ class _StockBodyState extends State<StockBody> {
             PointerDeviceKind.mouse,
           },
         ),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: SizedBox(
-            height: SizeConfig.height * 2,
-            child: Column(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.name,
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColorDark,
-                        fontSize: getHeight(26),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(height: getHeight(10)),
-                    FutureBuilder<Chart>(
-                      future: futureStock,
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const LinearProgressIndicator();
-                        }
-                        ranges = List<String>.generate(
-                            snapshot.data!.validRanges.length,
-                            (index) => snapshot.data!.validRanges[index]);
-                        return setRegularMarketPrice(snapshot);
-                      },
-                    ),
-                  ],
-                ),
                 SizedBox(height: getHeight(20)),
                 Text(
-                  "Chart",
+                  "${widget.name} (${widget.code}.NS)",
                   style: TextStyle(
-                    color: Theme.of(context).primaryColorDark,
-                    fontSize: getHeight(26),
+                    color: Theme.of(context).primaryColor,
+                    fontSize: getHeight(20),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: getHeight(20)),
+                SizedBox(height: getHeight(10)),
                 FutureBuilder<Chart>(
                   future: futureStock,
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return const LinearProgressIndicator();
                     }
-                    return rangeCreater(
-                        FontAwesomeIcons.calendar, "Data range", true, ranges);
+                    ranges = List<String>.generate(
+                        snapshot.data!.validRanges.length,
+                        (index) => snapshot.data!.validRanges[index]);
+                    return setRegularMarketPrice(snapshot);
                   },
                 ),
-                SizedBox(height: getHeight(20)),
-                FutureBuilder<Chart>(
-                  future: futureStock,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const LinearProgressIndicator();
-                    }
-                    return rangeCreater(FontAwesomeIcons.clock, "Time interval",
-                        false, Chart.interval);
-                  },
-                ),
-                SizedBox(height: getHeight(20)),
-                FutureBuilder<Chart>(
-                  future: futureStock,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const LinearProgressIndicator();
-                    }
-                    return chartCreater(snapshot);
-                  },
-                ),
-                // SizedBox(height: getHeight(20)),
-                // FutureBuilder<Finances>(
-                //   future: futureFinances,
-                //   builder: (context, snapshot) {
-                //     if (!snapshot.hasData) {
-                //       return const LinearProgressIndicator();
-                //     }
-                //     return Expanded(child: buildExpandableTable());
-                //   },
-                // ),
               ],
             ),
-          ),
+            SizedBox(height: getHeight(20)),
+            const Spacer(),
+            if (stockIsReady)
+              Text(
+                "Chart",
+                style: TextStyle(
+                  color: Theme.of(context).primaryColorDark,
+                  fontSize: getHeight(26),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            SizedBox(height: getHeight(20)),
+            FutureBuilder<Chart>(
+              future: futureStock,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Container();
+                }
+                return rangeCreater(
+                    FontAwesomeIcons.calendar, "Data range", true, ranges);
+              },
+            ),
+            SizedBox(height: getHeight(20)),
+            FutureBuilder<Chart>(
+              future: futureStock,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Container();
+                }
+                return rangeCreater(FontAwesomeIcons.clock, "Time interval",
+                    false, Chart.interval);
+              },
+            ),
+            SizedBox(height: getHeight(20)),
+            FutureBuilder<Chart>(
+              future: futureStock,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Container();
+                }
+                return chartCreater(snapshot);
+              },
+            ),
+            const Spacer(),
+
+            // SizedBox(height: getHeight(20)),
+            // FutureBuilder<Finances>(
+            //   future: futureFinances,
+            //   builder: (context, snapshot) {
+            //     if (!snapshot.hasData) {
+            //       return const LinearProgressIndicator();
+            //     }
+            //     return Expanded(child: buildExpandableTable());
+            //   },
+            // ),
+          ],
         ),
       ),
     );
@@ -155,6 +160,7 @@ class _StockBodyState extends State<StockBody> {
 
   Widget chartCreater(AsyncSnapshot<Chart> snapshot) {
     return Container(
+      width: SizeConfig.width * 0.82,
       height: getHeight(SizeConfig.height * 0.5),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColorLight.withOpacity(0.1),
@@ -250,17 +256,41 @@ class _StockBodyState extends State<StockBody> {
     var current = snapshot.data!.regularMarketPrice;
     var previousClose = snapshot.data!.chartPreviousClose;
     Color color = Theme.of(context).primaryColorDark;
+    String sign = "+";
 
     if (current > regularMarketPrice) {
       color = Colors.greenAccent;
     } else if (current < regularMarketPrice) {
+      sign = "-";
       color = Colors.redAccent;
     }
     regularMarketPrice = snapshot.data!.regularMarketPrice;
-    return Text(
-      "$current ${(current - previousClose).toStringAsFixed(2)} ${(100 - previousClose / current * 100).toStringAsFixed(2)}%",
-      style: TextStyle(
-          color: color, fontSize: getHeight(16), fontWeight: FontWeight.bold),
+    return Row(
+      children: [
+        Text(
+          "$current",
+          style: TextStyle(
+              color: color,
+              fontSize: getHeight(26),
+              fontWeight: FontWeight.bold),
+        ),
+        SizedBox(width: getHeight(20)),
+        Text(
+          sign + (current - previousClose).toStringAsFixed(2),
+          style: TextStyle(
+              color: color,
+              fontSize: getHeight(18),
+              fontWeight: FontWeight.bold),
+        ),
+        SizedBox(width: getHeight(10)),
+        Text(
+          "($sign${(100 - previousClose / current * 100).toStringAsFixed(2)}%)",
+          style: TextStyle(
+              color: color,
+              fontSize: getHeight(18),
+              fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 

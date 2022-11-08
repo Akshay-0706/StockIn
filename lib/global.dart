@@ -7,7 +7,9 @@ ThemeChanger themeChanger = ThemeChanger();
 class GlobalParams {
   static Duration duration = const Duration(milliseconds: 400);
 
-  static String ngrok = "https://6e8d-125-99-120-242.in.ngrok.io";
+  static String server = "http://localhost:3000";
+
+  static bool onDesktop = false;
 
   static List<String> suggestions = [
     "High extreme fear (<25) suggests a good time to open fresh positions, as markets are likely to be oversold and might turn upwards.",

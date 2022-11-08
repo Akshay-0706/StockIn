@@ -51,7 +51,7 @@ class DashBoard extends StatelessWidget {
                   children: [
                     NavBar(changeTab: changeTab),
                     SizedBox(height: getHeight(40)),
-                    MarketMood(context: context, marketMood: 50),
+                    MarketMood(context: context, marketMood: 60),
                     SizedBox(height: getHeight(20)),
                     StockMarket(changeTab: changeTab),
                     SizedBox(height: getHeight(40)),

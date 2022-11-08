@@ -56,7 +56,7 @@ class _IndicesBodyState extends State<IndicesBody>
     futureIndices = fetchIndices(mode);
 
     timer =
-        Timer.periodic(const Duration(seconds: 1), (Timer t) => callStock());
+        Timer.periodic(const Duration(seconds: 5), (Timer t) => callStock());
     super.initState();
   }
 
@@ -131,7 +131,7 @@ class _IndicesBodyState extends State<IndicesBody>
                     colors: [Color(0xFF1CA7EC), Color(0xFF1F2F98)],
                   ),
                 ),
-                labelColor: Colors.black,
+                labelColor: Colors.white,
                 unselectedLabelColor: Colors.black,
                 tabs: tabs,
               ),

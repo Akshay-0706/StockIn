@@ -205,6 +205,7 @@ class AboutTeamCard extends StatelessWidget {
                       color: Theme.of(context).primaryColorDark,
                     ),
                   ),
+                  SizedBox(height: getHeight(5)),
                   Text(
                     email,
                     style: TextStyle(

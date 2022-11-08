@@ -64,6 +64,7 @@ class _NavBarState extends State<NavBar> {
               GlobalParams.navBarQuotes.length,
               (index) => TypewriterAnimatedText(
                 GlobalParams.navBarQuotes[index],
+                cursor: "",
                 speed: const Duration(milliseconds: 50),
                 textStyle: TextStyle(
                   fontSize: getHeight(18),

@@ -25,7 +25,7 @@ class SignInProvider {
 
     final response = await http
         .post(Uri.parse(
-            "${GlobalParams.ngrok}/firebase/${userCredentials.user!.email!.replaceAll(".", "_")}"))
+            "${GlobalParams.server}/firebase/${userCredentials.user!.email!.replaceAll(".", "_")}"))
         .catchError((error) {
       return Response("Account already exists, loggin in", 409);
     });
