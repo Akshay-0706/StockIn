@@ -9,8 +9,6 @@ class GlobalParams {
 
   static String server = "http://localhost:3000";
 
-  static bool onDesktop = false;
-
   static List<String> suggestions = [
     "High extreme fear (<25) suggests a good time to open fresh positions, as markets are likely to be oversold and might turn upwards.",
     "It suggests that investors are fearful in the market, but the action to be taken depends on the MMI trajectory.",

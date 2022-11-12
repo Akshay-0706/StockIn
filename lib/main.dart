@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, TargetPlatform;
+// import 'package:flutter/foundation.dart'
+//     show defaultTargetPlatform, TargetPlatform;
 import 'package:stockin/global.dart';
 
 import 'firebase_options.dart';
@@ -9,15 +9,15 @@ import 'routes.dart';
 import 'theme.dart';
 
 Future<void> main() async {
-  if (defaultTargetPlatform == TargetPlatform.windows ||
-      defaultTargetPlatform == TargetPlatform.linux) {
-    GlobalParams.onDesktop = true;
-  } else {
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  }
+  // if (defaultTargetPlatform == TargetPlatform.windows ||
+  //     defaultTargetPlatform == TargetPlatform.linux) {
+  //   GlobalParams.onDesktop = true;
+  // } else {
+  //   WidgetsFlutterBinding.ensureInitialized();
+  //   await Firebase.initializeApp(
+  //     options: DefaultFirebaseOptions.currentPlatform,
+  //   );
+  // }
   runApp(const MyApp());
 }
 

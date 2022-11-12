@@ -128,17 +128,11 @@ class _AppDrawerState extends State<AppDrawer> {
                     logginIn = true;
                   });
 
-                  if (!GlobalParams.onDesktop) {
-                    user = await SignInProvider.googleLogin();
+                  user = await SignInProvider.googleLogin();
 
-                    pref.setString("email", user!.email!);
-                    pref.setString("name", user!.displayName!);
-                    pref.setString("image", user!.photoURL!);
-                  }
-                  else
-                  {
-                    
-                  }
+                  pref.setString("email", user!.email!);
+                  pref.setString("name", user!.displayName!);
+                  pref.setString("image", user!.photoURL!);
 
                   setState(() {
                     loggedIn = true;
