@@ -1,12 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:stockin/components/navBar.dart';
 import 'package:stockin/global.dart';
 
 import '../../../size.dart';
-import 'marketMood.dart';
-import 'popularWeek.dart';
-import 'stockMarket.dart';
+import '../../components/nav_bar.dart';
+import 'market_mood.dart';
+import 'popular_week.dart';
+import 'stock_market.dart';
 
 class DashBoard extends StatelessWidget {
   const DashBoard({

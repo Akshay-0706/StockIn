@@ -8,13 +8,13 @@ import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockin/database/data/stocks.dart';
 import 'package:stockin/database/server/api.dart';
-import 'package:stockin/database/server/regularStock.dart';
+import 'package:stockin/database/server/regular_stock.dart';
 import 'package:stockin/database/server/stocks.dart';
-import 'package:stockin/portfolio/components/circularChart.dart';
+import 'package:stockin/portfolio/components/circular_chart.dart';
 import 'package:stockin/size.dart';
 
-import '../../components/stockSearchBar.dart';
-import '../../database/data/investedStocks.dart';
+import '../../components/stock_search_bar.dart';
+import '../../database/data/invested_stocks.dart';
 import 'custom_text_field.dart';
 import 'portfolio_cards.dart';
 import 'portfolio_view.dart';
@@ -53,14 +53,16 @@ class _PortFolioBodyState extends State<PortFolioBody> {
 
   late Timer timer;
 
-  FutureOr<Null> getInvestedStocks() {
+  FutureOr<void> getInvestedStocks() {
     futureInvestedStock =
         fetchStocks(pref.getString("email")!.replaceAll(".", "_"));
     futureInvestedStock.then((value) {
       investedStocks = value.investedStocks;
       getLtp();
       timer = Timer.periodic(const Duration(seconds: 5), (Timer t) => getLtp());
-    }).catchError((error) => print("Error: " + error));
+    }).catchError((error) {
+      // print("Error: " + error);
+    });
   }
 
   @override
@@ -103,7 +105,9 @@ class _PortFolioBodyState extends State<PortFolioBody> {
         element.prevClose = value.previoudClose;
         i++;
         if (i == investedStocks.length) calRemaining();
-      }).catchError((error) => print("${element.symbol} not modified!"));
+      }).catchError((error) {
+        // print("${element.symbol} not modified!");
+      });
     }
     if (investedStocks.isEmpty) calRemaining();
   }

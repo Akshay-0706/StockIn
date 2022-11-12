@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_expandable_table/flutter_expandable_table.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stockin/database/server/api.dart';
-import 'package:stockin/database/server/stocks.dart';
 
 import '../../database/server/chart.dart';
 import '../../size.dart';

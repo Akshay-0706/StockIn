@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stockin/size.dart';
 
 import '../../database/server/api.dart';
@@ -181,21 +180,16 @@ class _IndicesBodyState extends State<IndicesBody>
                               .toString());
 
                           late Color color;
-                          late double opacity;
                           if (percentageChange >= 1) {
                             color = positive;
-                            opacity = 1;
                           } else if (percentageChange <= -1) {
                             color = negative;
-                            opacity = 1;
                           } else {
                             if (percentageChange >= 0) {
                               color = positive.withOpacity(percentageChange);
-                              opacity = percentageChange;
                             } else {
                               color =
                                   negative.withOpacity(percentageChange * -1);
-                              opacity = percentageChange * -1;
                             }
                           }
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:stockin/database/server/regularStock.dart';
+import 'package:stockin/database/server/regular_stock.dart';
 import 'package:stockin/global.dart';
 
 import 'chart.dart';

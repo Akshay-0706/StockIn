@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:stockin/about/about.dart';
+import 'package:stockin/home/components/dashboard.dart';
 import 'package:stockin/stock/stock.dart';
-import 'package:stockin/watchlist/watchlist.dart';
 
-import '../../components/appDrawer.dart';
+import '../../components/app_drawer.dart';
 import '../../indices/indices.dart';
-import 'dashboard.dart';
 import '../../portfolio/portfolio.dart';
 
 class HomeBody extends StatefulWidget {
