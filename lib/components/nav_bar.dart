@@ -15,7 +15,6 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  TextEditingController textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +25,7 @@ class _NavBarState extends State<NavBar> {
           child: StockSearchBar(
             searchList: stocks,
             hintText: "Search for Stocks",
+            controller: TextEditingController(),
             searchQueryBuilder: (query, list) {
               return list
                   .where((item) => item
@@ -52,8 +52,15 @@ class _NavBarState extends State<NavBar> {
                 ),
               );
             },
-            onItemSelected: (item) => widget.changeTab(3, true,
-                (item as Map<String, String>).values.last, (item).values.first),
+            onItemSelected: (item) {
+              if (item != null) {
+                widget.changeTab(
+                    3,
+                    true,
+                    (item as Map<String, String>).values.last,
+                    (item).values.first);
+              }
+            },
           ),
         ),
         const Spacer(),

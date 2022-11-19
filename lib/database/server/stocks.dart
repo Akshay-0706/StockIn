@@ -16,8 +16,17 @@ class Stocks {
           qty = double.parse(value.toString());
         }
       });
-      investedStocks.add(
-          StockInvested(key, qty, byPrice, qty * byPrice, 0, 0, 0, 0, 0, 0));
+      investedStocks.add(StockInvested(
+          key,
+          qty,
+          double.parse(byPrice.toStringAsFixed(2)),
+          qty * byPrice,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0));
     });
 
     return Stocks(investedStocks);

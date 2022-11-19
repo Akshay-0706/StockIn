@@ -95,22 +95,53 @@ class Global {
 class IndexColors {
   // Stock colors
   static List<Color> colors = [
-    const Color(0xFFEBA49C),
-    const Color(0xFFF04394),
+    // const Color(0xFFEBA49C),
+    // const Color(0xFFF04394),
+    // const Color(0xFFF9C449),
+    // const Color(0xFF7BD5F5),
+    // const Color(0xFF1CA7EC),
+    // const Color(0xFF7B7FF6),
+    // const Color(0xFF1F2F98),
+
+    const Color(0xFFFACD68),
+    const Color(0xFFFC76B3),
     const Color(0xFFF9C449),
     const Color(0xFF7BD5F5),
-    const Color(0xFF7B7FF6),
     const Color(0xFF1CA7EC),
+    const Color(0xFF7B7FF6),
     const Color(0xFF1F2F98),
   ];
 
   static final List<Gradient> indexGradients = [
-    LinearGradient(colors: [colors[0], colors[1]]),
-    LinearGradient(colors: [colors[1], colors[2]]),
-    LinearGradient(colors: [colors[2], colors[0]]),
-    LinearGradient(colors: [colors[3], colors[4]]),
-    LinearGradient(colors: [colors[5], colors[6]]),
-    LinearGradient(colors: [colors[6], colors[3]]),
-    LinearGradient(colors: [colors[0], colors[1]]),
+    LinearGradient(
+      colors: [colors[0], colors[1]],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    LinearGradient(
+      colors: [colors[1], colors[2]],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    LinearGradient(
+      colors: [colors[2], colors[3]],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    LinearGradient(
+      colors: [colors[3], colors[4]],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    LinearGradient(
+      colors: [colors[4], colors[5]],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    LinearGradient(
+      colors: [colors[5], colors[6]],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
   ];
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:dropdown_button2/custom_dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
@@ -12,9 +13,11 @@ import 'package:stockin/database/server/regular_stock.dart';
 import 'package:stockin/database/server/stocks.dart';
 import 'package:stockin/portfolio/components/circular_chart.dart';
 import 'package:stockin/size.dart';
+import 'package:http/http.dart' as http;
 
 import '../../components/stock_search_bar.dart';
 import '../../database/data/invested_stocks.dart';
+import '../../global.dart';
 import 'custom_text_field.dart';
 import 'portfolio_cards.dart';
 import 'portfolio_view.dart';
@@ -31,15 +34,15 @@ class _PortFolioBodyState extends State<PortFolioBody> {
       SharedPreferences.getInstance();
   late SharedPreferences pref;
   bool prefIsReady = false;
-  late bool loggedIn;
-  String mode = "Buy", searchStock = "";
-  late String stock;
+  late bool loggedIn = true;
+  String mode = "Buy", hintText = "Search", newStock = "";
   late int qty;
   late double price;
 
   late Future<StockLtp> futureStock;
   late Future<Stocks> futureInvestedStock;
   late List<StockInvested> investedStocks;
+  Map<String, double> stockQty = {};
   double totalInvestment = 0,
       currentInvestment = 0,
       totalTodaysPnl = 0,
@@ -49,13 +52,14 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   List<CircularStocks> circularStocks = [];
   List<String> stocksForSell = [];
 
-  TextEditingController controller = TextEditingController();
-
   late Timer timer;
 
+  TextEditingController priceController = TextEditingController();
+  TextEditingController qtyController = TextEditingController();
+
   FutureOr<void> getInvestedStocks() {
-    futureInvestedStock =
-        fetchStocks(pref.getString("email")!.replaceAll(".", "_"));
+    futureInvestedStock = fetchStocks("akshay0706vhatkar@gmail_com");
+    // fetchStocks(pref.getString("email")!.replaceAll(".", "_"));
     futureInvestedStock.then((value) {
       investedStocks = value.investedStocks;
       getLtp();
@@ -71,20 +75,10 @@ class _PortFolioBodyState extends State<PortFolioBody> {
       pref = value;
       setState(() {
         prefIsReady = true;
-        loggedIn = pref.containsKey("email");
+        // loggedIn = pref.containsKey("email");
       });
 
       getInvestedStocks();
-    });
-
-    controller.addListener(() {
-      controller.text = searchStock;
-      controller.value = controller.value.copyWith(
-        text: searchStock,
-        selection: TextSelection.fromPosition(
-          TextPosition(offset: searchStock.length),
-        ),
-      );
     });
 
     super.initState();
@@ -99,6 +93,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   void getLtp() {
     int i = 0;
     for (var element in investedStocks) {
+      stockQty[element.symbol] = element.qty;
       futureStock = fetchLtp("${element.symbol}.NS");
       futureStock.then((value) {
         element.ltp = value.regularMarketPrice;
@@ -145,7 +140,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
               (element.ltp * element.qty / totalLtp * 100)
                   .toStringAsFixed(2))));
     }
-    stock = stocksForSell.isNotEmpty ? stocksForSell[0] : "";
+    newStock = stocksForSell[0];
     setState(() {
       portfolioIsReady = true;
     });
@@ -160,10 +155,24 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   }
 
   void validator() {
-    if (stock.isNotEmpty && qty != 0 && price != 0) {}
+    if (newStock.isNotEmpty && qty != 0 && price != 0) {
+      modifyStocks();
+    }
   }
 
-  void onSubmitted() {}
+  void modifyStocks() async {
+    print(newStock);
+    putStock("akshay0706vhatkar@gmail_com", mode, newStock, price.toString(),
+            qty.toString())
+        .then((value) {
+      newStock = "";
+      hintText = "Search";
+      qtyController.clear();
+      priceController.clear();
+      timer.cancel();
+      getInvestedStocks();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +227,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
                 const CircularProgressIndicator(),
               if (prefIsReady && loggedIn && portfolioIsReady)
                 SizedBox(
-                  height: getHeight(400),
+                  height: getHeight(300),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -228,23 +237,14 @@ class _PortFolioBodyState extends State<PortFolioBody> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             PortfolioView(pref: pref),
-                            SizedBox(height: getHeight(40)),
-                            Text(
-                              "Buy or Sell Stocks",
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColorDark,
-                                  fontSize: getHeight(20),
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            addRemoveStocks(context),
-                            SizedBox(height: getHeight(20)),
+                            const Spacer(),
                             PortfolioCards(
                               totalInvestment: totalInvestment,
                               currentInvestment: currentInvestment,
                               totalTodaysPnl: totalTodaysPnl,
                               totalPnl: totalPnl,
                             ),
+                            const Spacer(),
                           ],
                         ),
                       ),
@@ -260,7 +260,11 @@ class _PortFolioBodyState extends State<PortFolioBody> {
                               ),
                             ),
                             if (portfolioIsReady && circularStocks.isNotEmpty)
-                              CiruclarChart(investedStocks: circularStocks),
+                              SizedBox(
+                                height: getHeight(250),
+                                child: CiruclarChart(
+                                    investedStocks: circularStocks),
+                              ),
                             if (!portfolioIsReady)
                               const CircularProgressIndicator(),
                             if (portfolioIsReady && investedStocks.isEmpty)
@@ -282,6 +286,22 @@ class _PortFolioBodyState extends State<PortFolioBody> {
                       ),
                     ],
                   ),
+                ),
+              if (prefIsReady && loggedIn && portfolioIsReady)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Buy or Sell Stocks",
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColorDark,
+                          fontSize: getHeight(20),
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: getHeight(20)),
+                    addRemoveStocks(context),
+                  ],
                 ),
               SizedBox(height: getHeight(40)),
               if (portfolioIsReady && investedStocks.isNotEmpty)
@@ -326,12 +346,13 @@ class _PortFolioBodyState extends State<PortFolioBody> {
 
   Row addRemoveStocks(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         if (mode == "Sell")
           CustomDropdownButton2(
-            hint: stock,
-            value: stock,
-            buttonWidth: getHeight(150),
+            hint: newStock,
+            value: newStock,
+            buttonWidth: getHeight(300),
             buttonHeight: getHeight(50),
             dropdownItems: stocksForSell,
             iconEnabledColor: Theme.of(context).primaryColorDark,
@@ -350,40 +371,58 @@ class _PortFolioBodyState extends State<PortFolioBody> {
             iconSize: getHeight(20),
             onChanged: (value) {
               setState(() {
-                stock = value!;
+                newStock = value!;
               });
             },
           ),
         if (mode == "Buy")
           SizedBox(
-            width: getHeight(150),
-            child: StockSearchBar(
-              searchList: stocks,
-              hintText: "Search",
-              controller: controller,
-              searchQueryBuilder: (query, list) {
-                return list
-                    .where((item) => item
-                        .toString()
-                        .toLowerCase()
-                        .contains(query.toLowerCase()))
-                    .toList();
-              },
-              overlaySearchListItemBuilder: (item) {
-                return Container(
-                  padding: const EdgeInsets.all(8),
+            width: getHeight(300),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(15),
                   child: Text(
-                    (item as Map<String, String>).values.last,
-                    style: const TextStyle(fontSize: 14),
+                    newStock,
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColorDark,
+                      fontSize: getHeight(14),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                );
-              },
-              onItemSelected: (item) {
-                setState(() {
-                  searchStock = (item as Map<String, String>).values.last;
-                  stock = searchStock;
-                });
-              },
+                ),
+                StockSearchBar(
+                  searchList: stocks,
+                  hintText: hintText,
+                  searchQueryBuilder: (query, list) {
+                    return list
+                        .where((item) => item
+                            .toString()
+                            .toLowerCase()
+                            .contains(query.toLowerCase()))
+                        .toList();
+                  },
+                  overlaySearchListItemBuilder: (item) {
+                    return Container(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(
+                        (item as Map<String, String>).values.last,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    );
+                  },
+                  onItemSelected: (item) {
+                    if (item != null) {
+                      hintText = "";
+                      setState(() {
+                        newStock = (item as Map<String, String>).values.last;
+                      });
+                    } else {
+                      hintText = "Search";
+                    }
+                  },
+                ),
+              ],
             ),
           ),
         SizedBox(width: getHeight(20)),
@@ -413,35 +452,46 @@ class _PortFolioBodyState extends State<PortFolioBody> {
             });
           },
         ),
+        const Spacer(),
         SizedBox(width: getHeight(20)),
         CustomTextField(
           onChanged: onChanged,
           forQty: true,
+          maxQty: mode == "Sell" ? stockQty[newStock]! : 0,
+          forBuy: mode == "Buy",
+          controller: qtyController,
         ),
         SizedBox(width: getHeight(20)),
         CustomTextField(
           onChanged: onChanged,
           forQty: false,
+          maxQty: mode == "Sell" ? stockQty[newStock]! : 0,
+          forBuy: mode == "Buy",
+          controller: priceController,
         ),
         SizedBox(width: getHeight(20)),
         InkWell(
-          onTap: () {},
+          onTap: () => validator(),
           borderRadius: BorderRadius.circular(8),
           child: Container(
             width: getHeight(100),
             height: getHeight(50),
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(0.4),
+              color: Theme.of(context).primaryColorDark.withOpacity(0.8),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
               child: Text(
                 "Done",
-                style: TextStyle(color: Theme.of(context).primaryColorDark),
+                style: TextStyle(
+                    color: Theme.of(context).backgroundColor,
+                    fontSize: getHeight(16),
+                    fontWeight: FontWeight.bold),
               ),
             ),
           ),
-        )
+        ),
+        SizedBox(width: getHeight(20)),
       ],
     );
   }

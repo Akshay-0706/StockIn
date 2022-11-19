@@ -52,3 +52,16 @@ Future<StockLtp> fetchLtp(String code) async {
     throw Exception("Failed to fetch ltp");
   }
 }
+
+Future<void> putStock(
+    String email, String mode, String code, String price, String qty) async {
+  print("Inside function");
+  final response = await http.put(Uri.parse(
+      "${GlobalParams.server}/firebase/$email/$mode/$code/$price/$qty"));
+
+  if (response.statusCode == 202) {
+    return;
+  } else {
+    throw Exception("Failed to putting stock");
+  }
+}
