@@ -1,19 +1,16 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:stockin/theme.dart';
 
 import '../../../size.dart';
 
 class IndexCard extends StatelessWidget {
   const IndexCard({
     Key? key,
-    required this.code,
     required this.name,
+    required this.change,
     required this.gradient,
   }) : super(key: key);
-  final String code, name;
+  final String name, change;
   final Gradient gradient;
 
   @override
@@ -57,14 +54,15 @@ class IndexCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      code,
+                      name,
                       style: TextStyle(
-                          color: Colors.black,
-                          fontSize: getHeight(18),
-                          fontWeight: FontWeight.w600),
+                        color: Colors.black,
+                        fontSize: getHeight(18),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     Text(
-                      name,
+                      change,
                       style: TextStyle(
                         color: Colors.black54,
                         fontSize: getHeight(14),

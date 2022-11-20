@@ -1,23 +1,22 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:dropdown_button2/custom_dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockin/database/data/stocks.dart';
 import 'package:stockin/database/server/api.dart';
 import 'package:stockin/database/server/regular_stock.dart';
 import 'package:stockin/database/server/stocks.dart';
+import 'package:stockin/global.dart';
 import 'package:stockin/portfolio/components/circular_chart.dart';
 import 'package:stockin/size.dart';
-import 'package:http/http.dart' as http;
 
 import '../../components/stock_search_bar.dart';
 import '../../database/data/invested_stocks.dart';
-import '../../global.dart';
 import 'custom_text_field.dart';
 import 'portfolio_cards.dart';
 import 'portfolio_view.dart';
@@ -35,6 +34,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   late SharedPreferences pref;
   bool prefIsReady = false;
   late bool loggedIn = true;
+  late String token, newToken;
   String mode = "Buy", hintText = "Search", newStock = "";
   late int qty;
   late double price;
@@ -52,30 +52,50 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   List<CircularStocks> circularStocks = [];
   List<String> stocksForSell = [];
 
-  late Timer timer;
+  late Timer timer, tokenTimer;
 
   TextEditingController priceController = TextEditingController();
   TextEditingController qtyController = TextEditingController();
 
   FutureOr<void> getInvestedStocks() {
-    futureInvestedStock = fetchStocks("akshay0706vhatkar@gmail_com");
-    // fetchStocks(pref.getString("email")!.replaceAll(".", "_"));
+    print("Outside");
+    futureInvestedStock =
+        fetchStocks(pref.getString("email")!.replaceAll(".", "_"));
     futureInvestedStock.then((value) {
       investedStocks = value.investedStocks;
       getLtp();
+      print("Inside");
       timer = Timer.periodic(const Duration(seconds: 5), (Timer t) => getLtp());
     }).catchError((error) {
-      // print("Error: " + error);
+      getLtp();
     });
+  }
+
+  void checkSession() async {
+    newToken = globalToken.getToken();
+    if (newToken.isNotEmpty) token = newToken;
+    if (loggedIn && JwtDecoder.isExpired(token)) {
+      setState(() {
+        loggedIn = false;
+      });
+    } else if (!JwtDecoder.isExpired(token)) {
+      setState(() {
+        loggedIn = true;
+      });
+    }
   }
 
   @override
   void initState() {
     sharedPrefInstance.then((value) {
       pref = value;
-      setState(() {
-        prefIsReady = true;
-        // loggedIn = pref.containsKey("email");
+      prefIsReady = true;
+      loggedIn = pref.containsKey("email");
+      token = pref.getString("token")!;
+      checkSession();
+
+      tokenTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        checkSession();
       });
 
       getInvestedStocks();
@@ -88,6 +108,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   void dispose() {
     super.dispose();
     timer.cancel();
+    tokenTimer.cancel();
   }
 
   void getLtp() {
@@ -140,7 +161,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
               (element.ltp * element.qty / totalLtp * 100)
                   .toStringAsFixed(2))));
     }
-    newStock = stocksForSell[0];
+    newStock = stocksForSell.isEmpty ? "" : stocksForSell[0];
     setState(() {
       portfolioIsReady = true;
     });
@@ -161,14 +182,16 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   }
 
   void modifyStocks() async {
-    print(newStock);
-    putStock("akshay0706vhatkar@gmail_com", mode, newStock, price.toString(),
-            qty.toString())
+    putStock(pref.getString("email")!.replaceAll(".", "_"), mode, newStock,
+            price.toString(), qty.toString())
         .then((value) {
-      newStock = "";
-      hintText = "Search";
-      qtyController.clear();
-      priceController.clear();
+      setState(() {
+        newStock = "";
+        hintText = "Search";
+        qtyController.clear();
+        priceController.clear();
+      });
+
       timer.cancel();
       getInvestedStocks();
     });
@@ -304,7 +327,10 @@ class _PortFolioBodyState extends State<PortFolioBody> {
                   ],
                 ),
               SizedBox(height: getHeight(40)),
-              if (portfolioIsReady && investedStocks.isNotEmpty)
+              if (prefIsReady &&
+                  loggedIn &&
+                  portfolioIsReady &&
+                  investedStocks.isNotEmpty)
                 PaginatedDataTable(
                   columnSpacing: 100,
                   arrowHeadColor: Theme.of(context).primaryColor,
@@ -383,7 +409,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
                 Padding(
                   padding: const EdgeInsets.all(15),
                   child: Text(
-                    newStock,
+                    hintText.isEmpty ? newStock : "",
                     style: TextStyle(
                       color: Theme.of(context).primaryColorDark,
                       fontSize: getHeight(14),

@@ -21,7 +21,7 @@ class StockBody extends StatefulWidget {
 }
 
 class _StockBodyState extends State<StockBody> {
-  late Future<Chart> futureStock;
+  late Chart futureStock;
   late Timer timer;
   late double regularMarketPrice = 0;
   String selectedRange = "1d", selectedInterval = "1m";
@@ -30,18 +30,28 @@ class _StockBodyState extends State<StockBody> {
 
   void callStock() async {
     setState(() {
-      futureStock =
-          fetchChart("${widget.code}.NS", selectedRange, selectedInterval);
+      fetchChart("${widget.code}.NS", selectedRange, selectedInterval)
+          .then((value) {
+        if (value != null) {
+          futureStock = value;
+          ranges = List<String>.generate(futureStock.validRanges.length,
+              (index) => futureStock.validRanges[index]);
+        }
+      });
     });
   }
 
   @override
   void initState() {
-    futureStock = fetchChart("${widget.code}.NS", "1d", "1m").then((value) {
-      setState(() {
-        stockIsReady = true;
-      });
-      return value;
+    fetchChart("${widget.code}.NS", "1d", "1m").then((value) {
+      if (value != null) {
+        futureStock = value;
+        ranges = List<String>.generate(futureStock.validRanges.length,
+            (index) => futureStock.validRanges[index]);
+        setState(() {
+          stockIsReady = true;
+        });
+      }
     });
 
     timer =
@@ -82,18 +92,8 @@ class _StockBodyState extends State<StockBody> {
                   ),
                 ),
                 SizedBox(height: getHeight(10)),
-                FutureBuilder<Chart>(
-                  future: futureStock,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const LinearProgressIndicator();
-                    }
-                    ranges = List<String>.generate(
-                        snapshot.data!.validRanges.length,
-                        (index) => snapshot.data!.validRanges[index]);
-                    return setRegularMarketPrice(snapshot);
-                  },
-                ),
+                if (!stockIsReady) LinearProgressIndicator(),
+                if (stockIsReady) setRegularMarketPrice(futureStock),
               ],
             ),
             SizedBox(height: getHeight(20)),
@@ -108,37 +108,16 @@ class _StockBodyState extends State<StockBody> {
                 ),
               ),
             SizedBox(height: getHeight(20)),
-            FutureBuilder<Chart>(
-              future: futureStock,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Container();
-                }
-                return rangeCreater(
-                    FontAwesomeIcons.calendar, "Data range", true, ranges);
-              },
-            ),
+            if (stockIsReady)
+              rangeCreater(
+                  FontAwesomeIcons.calendar, "Data range", true, ranges),
             SizedBox(height: getHeight(20)),
-            FutureBuilder<Chart>(
-              future: futureStock,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Container();
-                }
-                return rangeCreater(FontAwesomeIcons.clock, "Time interval",
-                    false, Chart.interval);
-              },
-            ),
+            if (stockIsReady)
+              rangeCreater(FontAwesomeIcons.clock, "Time interval", false,
+                  Chart.interval),
+
             SizedBox(height: getHeight(20)),
-            FutureBuilder<Chart>(
-              future: futureStock,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Container();
-                }
-                return chartCreater(snapshot);
-              },
-            ),
+            if (stockIsReady) chartCreater(futureStock),
             const Spacer(),
 
             // SizedBox(height: getHeight(20)),
@@ -157,7 +136,7 @@ class _StockBodyState extends State<StockBody> {
     );
   }
 
-  Widget chartCreater(AsyncSnapshot<Chart> snapshot) {
+  Widget chartCreater(Chart futureStock) {
     return Container(
       width: SizeConfig.width * 0.82,
       height: getHeight(SizeConfig.height * 0.5),
@@ -173,12 +152,12 @@ class _StockBodyState extends State<StockBody> {
           },
         ),
         child: candleStickCreater(
-            snapshot.data!.timestamp.reversed.toList(),
-            snapshot.data!.open.reversed.toList(),
-            snapshot.data!.close.reversed.toList(),
-            snapshot.data!.high.reversed.toList(),
-            snapshot.data!.low.reversed.toList(),
-            snapshot.data!.volume.reversed.toList()),
+            futureStock.timestamp.reversed.toList(),
+            futureStock.open.reversed.toList(),
+            futureStock.close.reversed.toList(),
+            futureStock.high.reversed.toList(),
+            futureStock.low.reversed.toList(),
+            futureStock.volume.reversed.toList()),
       ),
     );
   }
@@ -251,11 +230,11 @@ class _StockBodyState extends State<StockBody> {
                 volume: newVolume[index])));
   }
 
-  Widget setRegularMarketPrice(AsyncSnapshot<Chart> snapshot) {
-    var current = snapshot.data!.regularMarketPrice;
-    var previousClose = snapshot.data!.chartPreviousClose;
+  Widget setRegularMarketPrice(Chart futureStock) {
+    var current = futureStock.regularMarketPrice;
+    var previousClose = futureStock.chartPreviousClose;
     Color color = Theme.of(context).primaryColorDark;
-    String sign = "+";
+    String sign = "";
 
     if (current > regularMarketPrice) {
       color = Colors.greenAccent;
@@ -263,7 +242,7 @@ class _StockBodyState extends State<StockBody> {
       sign = "-";
       color = Colors.redAccent;
     }
-    regularMarketPrice = snapshot.data!.regularMarketPrice;
+    regularMarketPrice = futureStock.regularMarketPrice;
     return Row(
       children: [
         Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:stockin/database/scrapper.dart';
 import 'package:stockin/global.dart';
 
 import '../../../size.dart';
@@ -51,12 +52,13 @@ class DashBoard extends StatelessWidget {
                   children: [
                     NavBar(changeTab: changeTab),
                     SizedBox(height: getHeight(40)),
-                    MarketMood(context: context, marketMood: 60),
+                    MarketMood(context: context),
                     SizedBox(height: getHeight(20)),
                     StockMarket(changeTab: changeTab),
                     SizedBox(height: getHeight(40)),
-                    PopularWeek(changeTab: changeTab),
-                    // const Bottom(),
+                    PopularWeek(trend: "Gainer", changeTab: changeTab),
+                    SizedBox(height: getHeight(20)),
+                    PopularWeek(trend: "Loser", changeTab: changeTab),
                   ],
                 ),
               ),

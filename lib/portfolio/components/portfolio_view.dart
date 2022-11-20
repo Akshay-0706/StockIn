@@ -33,26 +33,26 @@ class PortfolioView extends StatelessWidget {
               borderRadius: BorderRadius.circular(8)),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            // child: CachedNetworkImage(
-            //   width: getHeight(100),
-            //   height: getHeight(100),
-            //   imageUrl: pref.getString("image")!,
-            //   placeholder: (context, url) => Container(
-            //     width: getHeight(100),
-            //     height: getHeight(100),
-            //     decoration: BoxDecoration(
-            //         color: Theme.of(context).backgroundColor,
-            //         shape: BoxShape.circle),
-            //     child: CircularProgressIndicator(
-            //       color: Theme.of(context).primaryColor,
-            //       strokeWidth: 4,
-            //     ),
-            //   ),
-            //   errorWidget: (context, url, error) => Icon(
-            //     Icons.error_outline,
-            //     color: Theme.of(context).primaryColorDark,
-            //   ),
-            // ),
+            child: CachedNetworkImage(
+              width: getHeight(100),
+              height: getHeight(100),
+              imageUrl: pref.getString("image")!,
+              placeholder: (context, url) => Container(
+                width: getHeight(100),
+                height: getHeight(100),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).backgroundColor,
+                    shape: BoxShape.circle),
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                  strokeWidth: 4,
+                ),
+              ),
+              errorWidget: (context, url, error) => Icon(
+                Icons.error_outline,
+                color: Theme.of(context).primaryColorDark,
+              ),
+            ),
           ),
         ),
         SizedBox(width: getHeight(40)),
@@ -61,8 +61,7 @@ class PortfolioView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              // pref.getString("name")!,
-              "Akshay Vhatkar",
+              pref.getString("name")!,
               overflow: TextOverflow.clip,
               style: TextStyle(
                   color: Theme.of(context).primaryColorDark,
@@ -71,8 +70,7 @@ class PortfolioView extends StatelessWidget {
             ),
             SizedBox(height: getHeight(10)),
             Text(
-              // pref.getString("email")!,
-              "akshay0706vhatkar@gmail.com",
+              pref.getString("email")!,
               style: TextStyle(
                 color: Theme.of(context).primaryColorLight,
                 fontSize: getHeight(18),

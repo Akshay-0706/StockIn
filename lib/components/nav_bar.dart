@@ -55,7 +55,7 @@ class _NavBarState extends State<NavBar> {
             onItemSelected: (item) {
               if (item != null) {
                 widget.changeTab(
-                    3,
+                    2,
                     true,
                     (item as Map<String, String>).values.last,
                     (item).values.first);

@@ -1,8 +1,11 @@
 library config.globals;
 
+import 'package:stockin/database/data/token.dart';
 import 'package:stockin/theme.dart';
 
 ThemeChanger themeChanger = ThemeChanger();
+
+Token globalToken = Token();
 
 class GlobalParams {
   static Duration duration = const Duration(milliseconds: 400);

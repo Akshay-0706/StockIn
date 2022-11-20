@@ -50,19 +50,20 @@ class DrawerMenu extends StatelessWidget {
                           ? Theme.of(context).primaryColor
                           : Theme.of(context)
                               .primaryColorLight
-                              .withOpacity(0.3),
+                              .withOpacity(0.7),
                     ),
                     if (!shrink) SizedBox(width: getHeight(10)),
                     if (!shrink)
                       Text(
                         title,
                         style: TextStyle(
-                            color: isSelected
-                                ? Theme.of(context).primaryColor
-                                : Theme.of(context)
-                                    .primaryColorLight
-                                    .withOpacity(0.3),
-                            fontSize: getHeight(14)),
+                          color: isSelected
+                              ? Theme.of(context).primaryColor
+                              : Theme.of(context)
+                                  .primaryColorLight
+                                  .withOpacity(0.7),
+                          fontSize: getHeight(14),
+                        ),
                       ),
                   ],
                 ),

@@ -1,24 +1,31 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:stockin/home/components/index_card_shimmer.dart';
 import 'package:stockin/theme.dart';
 
 import '../../../size.dart';
 import 'index_card.dart';
 
-class StockMarket extends StatelessWidget {
+class StockMarket extends StatefulWidget {
   StockMarket({
     Key? key,
     required this.changeTab,
   }) : super(key: key);
   final Function changeTab;
 
+  @override
+  State<StockMarket> createState() => _StockMarketState();
+}
+
+class _StockMarketState extends State<StockMarket> {
+  bool areIndicesReady = true;
   final List<Map<String, String>> topIndices = [
-    {"code": "SBIN.NS", "name": "State Bank of India"},
-    {"code": "RELIANCE.NS", "name": "Reliance India"},
-    {"code": "SBIN.NS", "name": "State Bank of India"},
-    {"code": "SBIN.NS", "name": "State Bank of India"},
-    {"code": "SBIN.NS", "name": "State Bank of India"},
-    {"code": "SBIN.NS", "name": "State Bank of India"},
+    {"name": "Nifty 50", "change": "Nifty 50"},
+    {"name": "Sensex", "change": "Sensex"},
+    {"name": "Nifty FMCG", "change": "Nifty 100"},
+    {"name": "Nifty IT", "change": "Nifty IT"},
+    {"name": "Nifty Pharma", "change": "Nifty 200"},
+    {"name": "Nifty Bank", "change": "Nifty 500"},
   ];
 
   @override
@@ -52,7 +59,7 @@ class StockMarket extends StatelessWidget {
             MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
-                onTap: () => changeTab(2, false),
+                onTap: () => widget.changeTab(2, false),
                 child: Text(
                   "View All",
                   style: TextStyle(
@@ -81,11 +88,14 @@ class StockMarket extends StatelessWidget {
               height: getHeight(120),
               child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => IndexCard(
-                        code: topIndices[index].entries.first.value,
-                        name: topIndices[index].entries.last.value,
-                        gradient: IndexColors.indexGradients[index],
-                      ),
+                  itemBuilder: (context, index) => areIndicesReady
+                      ? IndexCard(
+                          name: topIndices[index].entries.first.value,
+                          change: topIndices[index].entries.last.value,
+                          gradient: IndexColors.indexGradients[index],
+                        )
+                      : IndexCardShimmer(
+                          gradient: IndexColors.indexGradients[index]),
                   separatorBuilder: (context, index) =>
                       SizedBox(width: getHeight(20)),
                   itemCount: topIndices.length),

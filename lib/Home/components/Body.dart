@@ -1,11 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockin/about/about.dart';
+import 'package:stockin/database/jwt.dart';
+import 'package:stockin/database/sign_in.dart';
 import 'package:stockin/home/components/dashboard.dart';
 import 'package:stockin/stock/stock.dart';
 
 import '../../components/app_drawer.dart';
+import '../../components/primary_btn.dart';
 import '../../indices/indices.dart';
 import '../../portfolio/portfolio.dart';
+import '../../size.dart';
 
 class HomeBody extends StatefulWidget {
   const HomeBody({Key? key}) : super(key: key);
@@ -17,6 +25,7 @@ class HomeBody extends StatefulWidget {
 class _HomeBodyState extends State<HomeBody> {
   int current = 0;
   String code = "", name = "";
+
   // bool shrink = SizeConfig.width <= 1200, tab = SizeConfig.width <= 950;
 
   List<Widget> tabs = [
@@ -40,40 +49,21 @@ class _HomeBodyState extends State<HomeBody> {
     });
   }
 
-  // late Timer timer;
-  @override
-  void initState() {
-    super.initState();
-    // timer = Timer.periodic(
-    //     const Duration(seconds: 1),
-    //     (Timer t) => setState(() {
-    //           print(SizeConfig.width);
-    //           if (SizeConfig.width <= 1200) {
-    //             shrink = true;
-    //           } else {
-    //             shrink = false;
-    //           }
-    //         }));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    // timer.cancel();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        AppDrawer(
-          changeTab: changeTab,
-          current: current,
+        Expanded(
+          child: AppDrawer(
+            changeTab: changeTab,
+            current: current,
+          ),
         ),
         Expanded(
+            flex: 6,
             child: current == 0
                 ? DashBoard(changeTab: changeTab)
-                : current == 3
+                : current == 2
                     ? Stock(code: code, name: name)
                     : tabs[current]),
       ],

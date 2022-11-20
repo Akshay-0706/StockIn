@@ -6,93 +6,111 @@ import '../../../size.dart';
 class PopularCard extends StatelessWidget {
   const PopularCard({
     Key? key,
+    required this.index,
+    required this.length,
     required this.code,
-    required this.name, required this.changeTab,
+    required this.name,
+    required this.changeTab,
+    required this.value,
+    required this.perChg,
   }) : super(key: key);
+  final int index, length;
   final String code, name;
+  final double value, perChg;
   final Function changeTab;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => changeTab(3, true, code, name),
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: getHeight(130),
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColorLight.withAlpha(10),
+    return Row(
+      children: [
+        InkWell(
+          // onTap: () => changeTab(2, true, code, name),
           borderRadius: BorderRadius.circular(8),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(getHeight(16)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColorLight.withAlpha(10),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(getHeight(16)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: getHeight(40),
-                    height: getHeight(40),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).primaryColorLight.withAlpha(20),
-                    ),
-                    child: Center(
-                        child: FaIcon(
-                      FontAwesomeIcons.apple,
-                      size: getHeight(25),
-                      color: Theme.of(context).primaryColorDark,
-                    )),
+                  Row(
+                    children: [
+                      Container(
+                        width: getHeight(40),
+                        height: getHeight(40),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color:
+                              Theme.of(context).primaryColorLight.withAlpha(20),
+                        ),
+                        child: Center(
+                            child: Text(
+                          code[0],
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColorDark,
+                              fontSize: getHeight(18),
+                              fontWeight: FontWeight.bold),
+                        )),
+                      ),
+                      SizedBox(width: getHeight(10)),
+                      Text(
+                        code,
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColorDark,
+                            fontSize: getHeight(12),
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: getHeight(10)),
+                  SizedBox(height: getHeight(10)),
+                  SizedBox(
+                    width: getHeight(100),
+                    child: Text(
+                      name,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColorLight,
+                        fontSize: getHeight(10),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: getHeight(7)),
                   Text(
-                    code,
+                    "\u{20B9} $value",
                     style: TextStyle(
                         color: Theme.of(context).primaryColorDark,
-                        fontSize: getHeight(12),
-                        fontWeight: FontWeight.w600),
+                        fontSize: getHeight(16),
+                        fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: getHeight(7)),
+                  RichText(
+                    text: TextSpan(
+                        text: "$perChg%",
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColorDark,
+                          fontSize: getHeight(10),
+                          fontWeight: FontWeight.w600,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: " this week",
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColorLight,
+                              fontSize: getHeight(10),
+                            ),
+                          )
+                        ]),
                   ),
                 ],
               ),
-              SizedBox(height: getHeight(10)),
-              Text(
-                name,
-                style: TextStyle(
-                  color: Theme.of(context).primaryColorLight,
-                  fontSize: getHeight(10),
-                ),
-              ),
-              SizedBox(height: getHeight(7)),
-              Text(
-                "\$1200",
-                style: TextStyle(
-                    color: Theme.of(context).primaryColorDark,
-                    fontSize: getHeight(16),
-                    fontWeight: FontWeight.w700),
-              ),
-              SizedBox(height: getHeight(7)),
-              RichText(
-                text: TextSpan(
-                    text: "20%",
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                      fontSize: getHeight(10),
-                      fontWeight: FontWeight.w600,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: " this week",
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColorLight,
-                          fontSize: getHeight(10),
-                        ),
-                      )
-                    ]),
-              )
-            ],
+            ),
           ),
         ),
-      ),
+        if (index != length - 1) SizedBox(width: getHeight(20)),
+      ],
     );
   }
 }

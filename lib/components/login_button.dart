@@ -7,7 +7,8 @@ class Button extends StatelessWidget {
   const Button({
     Key? key,
     required this.isHovered,
-    required this.shrink, required this.icon,
+    required this.shrink,
+    required this.icon,
   }) : super(key: key);
 
   final bool isHovered, shrink;
@@ -52,16 +53,10 @@ class Button extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
+          // mainAxisSize: MainAxisSize.min,
           children: [
-            FaIcon(
-              icon,
-              size: getHeight(16),
-            ),
-            if (!shrink)
-              SizedBox(
-                width: getHeight(10),
-              ),
+            FaIcon(icon, size: getHeight(16)),
+            if (!shrink) SizedBox(width: getHeight(10)),
             if (!shrink)
               Text(
                 "Login/Register",
