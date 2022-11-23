@@ -82,7 +82,7 @@ Future<TopIndices> fetchTopIndices() async {
   final response = await http
       .get(Uri.parse("http://localhost:2000/topindices"))
       .catchError((error) {
-    return http.get(Uri.parse("http://localhost:3000/topindices"));
+    return http.get(Uri.parse("${GlobalParams.server}/topindices"));
   });
 
   if (response.statusCode == 200) {
