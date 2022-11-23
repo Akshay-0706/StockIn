@@ -7,5 +7,8 @@
     "firebase": "^8.6.8",
     "jsonwebtoken": "^8.5.1",
     "request": "^2.88.2"
+  },
+  "scripts": {
+    "start": "node ./lib/node.js"
   }
 }
