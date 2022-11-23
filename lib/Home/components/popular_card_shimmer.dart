@@ -6,9 +6,9 @@ import '../../../size.dart';
 class PopularCardShimmer extends StatelessWidget {
   const PopularCardShimmer({
     Key? key,
-    this.index,
+    required this.index,
   }) : super(key: key);
-  final index;
+  final int index;
 
   @override
   Widget build(BuildContext context) {

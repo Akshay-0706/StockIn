@@ -92,7 +92,7 @@ class _StockBodyState extends State<StockBody> {
                   ),
                 ),
                 SizedBox(height: getHeight(10)),
-                if (!stockIsReady) LinearProgressIndicator(),
+                if (!stockIsReady) const LinearProgressIndicator(),
                 if (stockIsReady) setRegularMarketPrice(futureStock),
               ],
             ),

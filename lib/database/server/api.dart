@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:stockin/database/server/popular.dart';
 import 'package:stockin/database/server/regular_stock.dart';
+import 'package:stockin/database/server/top_indices.dart';
 import 'package:stockin/global.dart';
 
 import 'chart.dart';
@@ -72,6 +73,20 @@ Future<Popular> fetchPopular(String trend) async {
 
   if (response.statusCode == 200) {
     return Popular.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception("Failed to fetch popular");
+  }
+}
+
+Future<TopIndices> fetchTopIndices() async {
+  final response = await http
+      .get(Uri.parse("http://localhost:2000/topindices"))
+      .catchError((error) {
+    return http.get(Uri.parse("http://localhost:3000/topindices"));
+  });
+
+  if (response.statusCode == 200) {
+    return TopIndices.fromJson(jsonDecode(response.body));
   } else {
     throw Exception("Failed to fetch popular");
   }

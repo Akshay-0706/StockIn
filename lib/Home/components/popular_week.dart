@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:stockin/database/server/api.dart';
@@ -8,7 +10,7 @@ import '../../../size.dart';
 import 'popular_card.dart';
 
 class PopularWeek extends StatefulWidget {
-  PopularWeek({
+  const PopularWeek({
     Key? key,
     required this.changeTab,
     required this.trend,
@@ -21,19 +23,33 @@ class PopularWeek extends StatefulWidget {
 }
 
 class _PopularWeekState extends State<PopularWeek> {
-  // final List<Map<String, String>> popularWeek = [
   bool isTrendReady = false;
   late List<PopularTrend> popular;
+  late Color? color;
+  late List<double> trend = [];
 
-  @override
-  void initState() {
+  late Timer timer;
+
+  void getPopular() {
     fetchPopular(widget.trend).then((value) {
       popular = value.popular;
       setState(() {
         isTrendReady = true;
       });
     });
+  }
+
+  @override
+  void initState() {
+    getPopular();
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) => getPopular());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -72,20 +88,33 @@ class _PopularWeekState extends State<PopularWeek> {
             physics: const BouncingScrollPhysics(),
             child: Row(
               children: [
-                ...List.generate(
-                  isTrendReady ? popular.length : 10,
-                  (index) => isTrendReady
-                      ? PopularCard(
-                          index: index,
-                          length: popular.length,
-                          code: popular[index].code,
-                          name: popular[index].name,
-                          value: popular[index].value,
-                          perChg: popular[index].perChg,
-                          changeTab: widget.changeTab,
-                        )
-                      : PopularCardShimmer(index: index),
-                )
+                ...List.generate(isTrendReady ? popular.length : 10, (index) {
+                  if (isTrendReady) {
+                    color = trend.length != popular.length
+                        ? null
+                        : trend[index] == popular[index].value
+                            ? null
+                            : popular[index].value > trend[index]
+                                ? Colors.greenAccent.withAlpha(40)
+                                : Colors.redAccent.withAlpha(40);
+                    if (trend.length != popular.length) {
+                      trend.add(popular[index].value);
+                    }
+                    trend[index] = popular[index].value;
+                    return PopularCard(
+                      index: index,
+                      length: popular.length,
+                      code: popular[index].code,
+                      name: popular[index].name,
+                      value: popular[index].value,
+                      perChg: popular[index].perChg,
+                      changeTab: widget.changeTab,
+                      color: color,
+                    );
+                  } else {
+                    return PopularCardShimmer(index: index);
+                  }
+                })
               ],
             ),
             // child: SizedBox(

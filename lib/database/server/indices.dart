@@ -10,19 +10,25 @@ class Indices {
     String compare = type == "nse" ? "data" : "Table";
     String percentCng = type == "nse" ? "percentChange" : "PERCENTCHG";
     // print("Index:");
-    for (var entry in json.entries) {
-      // print(entry.key);
-      if (entry.key == compare) {
-        // print("GOT IT");
-        data = entry.value as List<dynamic>;
-        for (var element in data) {
-          ind = element as Map<String, dynamic>;
-          Index index = Index(ind);
-          indices.add(index);
-        }
-        break;
-      }
+    data = json[compare] as List<dynamic>;
+    for (var element in data) {
+      ind = element as Map<String, dynamic>;
+      Index index = Index(ind);
+      indices.add(index);
     }
+    // for (var entry in json.entries) {
+    //   // print(entry.key);
+    //   if (entry.key == compare) {
+    //     // print("GOT IT");
+    //     data = entry.value as List<dynamic>;
+    //     for (var element in data) {
+    //       ind = element as Map<String, dynamic>;
+    //       Index index = Index(ind);
+    //       indices.add(index);
+    //     }
+    //     break;
+    //   }
+    // }
     indices.sort((a, b) => (double.parse(b.index[percentCng].toString())
         .compareTo(double.parse(a.index[percentCng].toString()))));
 

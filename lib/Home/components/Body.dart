@@ -1,19 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockin/about/about.dart';
-import 'package:stockin/database/jwt.dart';
-import 'package:stockin/database/sign_in.dart';
 import 'package:stockin/home/components/dashboard.dart';
 import 'package:stockin/stock/stock.dart';
 
 import '../../components/app_drawer.dart';
-import '../../components/primary_btn.dart';
 import '../../indices/indices.dart';
 import '../../portfolio/portfolio.dart';
-import '../../size.dart';
 
 class HomeBody extends StatefulWidget {
   const HomeBody({Key? key}) : super(key: key);

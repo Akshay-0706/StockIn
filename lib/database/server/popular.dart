@@ -5,9 +5,10 @@ class Popular {
 
   factory Popular.fromJson(Map<String, dynamic> json) {
     List<dynamic> data = json["Table"];
+    Map<String, dynamic> indices;
     List<PopularTrend> popular = [];
     for (var element in data) {
-      Map<String, dynamic> indices = element as Map<String, dynamic>;
+      indices = element as Map<String, dynamic>;
       popular.add(PopularTrend(indices["LONG_NAME"], indices["scripname"],
           indices["trd_val"], indices["change_percent"]));
     }

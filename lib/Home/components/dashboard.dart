@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:stockin/database/scrapper.dart';
 import 'package:stockin/global.dart';
 
 import '../../../size.dart';
@@ -44,23 +43,40 @@ class DashBoard extends StatelessWidget {
             ),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: EdgeInsets.all(getHeight(40)),
-                child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    NavBar(changeTab: changeTab),
-                    SizedBox(height: getHeight(40)),
-                    MarketMood(context: context),
-                    SizedBox(height: getHeight(20)),
-                    StockMarket(changeTab: changeTab),
-                    SizedBox(height: getHeight(40)),
-                    PopularWeek(trend: "Gainer", changeTab: changeTab),
-                    SizedBox(height: getHeight(20)),
-                    PopularWeek(trend: "Loser", changeTab: changeTab),
-                  ],
-                ),
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: getHeight(40),
+                      right: getHeight(40),
+                      top: getHeight(40),
+                    ),
+                    child: NavBar(changeTab: changeTab),
+                  ),
+                  SizedBox(height: getHeight(40)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: getHeight(40)),
+                    child: MarketMood(context: context),
+                  ),
+                  SizedBox(height: getHeight(20)),
+                  StockMarket(changeTab: changeTab),
+                  SizedBox(height: getHeight(20)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: getHeight(40)),
+                    child: PopularWeek(trend: "Gainer", changeTab: changeTab),
+                  ),
+                  SizedBox(height: getHeight(20)),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: getHeight(40),
+                      right: getHeight(40),
+                      bottom: getHeight(40),
+                    ),
+                    child: PopularWeek(trend: "Loser", changeTab: changeTab),
+                  ),
+                ],
               ),
             ),
           ),

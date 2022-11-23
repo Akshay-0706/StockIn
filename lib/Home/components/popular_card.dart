@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../size.dart';
 
@@ -13,11 +12,13 @@ class PopularCard extends StatelessWidget {
     required this.changeTab,
     required this.value,
     required this.perChg,
+    required this.color,
   }) : super(key: key);
   final int index, length;
   final String code, name;
   final double value, perChg;
   final Function changeTab;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +27,10 @@ class PopularCard extends StatelessWidget {
         InkWell(
           // onTap: () => changeTab(2, true, code, name),
           borderRadius: BorderRadius.circular(8),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColorLight.withAlpha(10),
+              color: color ?? Theme.of(context).primaryColorLight.withAlpha(10),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Padding(
@@ -96,7 +98,7 @@ class PopularCard extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                            text: " this week",
+                            text: " today",
                             style: TextStyle(
                               color: Theme.of(context).primaryColorLight,
                               fontSize: getHeight(10),

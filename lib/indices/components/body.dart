@@ -55,7 +55,7 @@ class _IndicesBodyState extends State<IndicesBody>
     futureIndices = fetchIndices(mode);
 
     timer =
-        Timer.periodic(const Duration(seconds: 5), (Timer t) => callStock());
+        Timer.periodic(const Duration(seconds: 2), (Timer t) => callStock());
     super.initState();
   }
 

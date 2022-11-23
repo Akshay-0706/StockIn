@@ -1,0 +1,169 @@
+{
+    "Sensex": [
+        {
+            "indxnm": "SenSexValue",
+            "ltp": "61,663.48",
+            "chg": "-87.12",
+            "perchg": "-0.14",
+            "F": "2",
+            "dttm": "18 Nov 22 | 15:59",
+            "istream": "0",
+            "msg": "",
+            "Prev_Close": "61,750.60",
+            "I_open": "61,858.20",
+            "High": "61,929.88",
+            "Low": "61,337.43",
+            "source": "DB"
+        }
+    ],
+    "N50": {
+        "data": [
+            {
+                "sid": ".NSEI",
+                "type": "index",
+                "exchange": "NSE",
+                "price": 18307.65,
+                "o": 18382.95,
+                "h": 18394.6,
+                "l": 18209.8,
+                "c": 18343.9,
+                "change": -36.25,
+                "vol": 0,
+                "ts": 1668767338674,
+                "wkRange": null,
+                "mnRange": null,
+                "dyChange": -0.2,
+                "wkChange": null,
+                "mnChange": null,
+                "crossedHigh": false,
+                "crossedLow": false,
+                "away52wH": null,
+                "away52wL": null,
+                "turnover": null,
+                "volBreakout": null,
+                "low52w": null,
+                "high52w": null
+            }
+        ]
+    },
+    "NBank": {
+        "data": [
+            {
+                "sid": ".NSEBANK",
+                "type": "index",
+                "exchange": "NSE",
+                "price": 42437.45,
+                "o": 42545.75,
+                "h": 42590.75,
+                "l": 42223.7,
+                "c": 42458.05,
+                "change": -20.6,
+                "vol": 0,
+                "ts": 1668767338674,
+                "wkRange": null,
+                "mnRange": null,
+                "dyChange": -0.05,
+                "wkChange": null,
+                "mnChange": null,
+                "crossedHigh": false,
+                "crossedLow": false,
+                "away52wH": null,
+                "away52wL": null,
+                "turnover": null,
+                "volBreakout": null,
+                "low52w": null,
+                "high52w": null
+            }
+        ]
+    },
+    "NIT": {
+        "data": [
+            {
+                "sid": ".NIFTYIT",
+                "type": "index",
+                "exchange": "NSE",
+                "price": 29669.25,
+                "o": 29739.2,
+                "h": 29890.5,
+                "l": 29398.95,
+                "c": 29681.4,
+                "change": -12.15,
+                "vol": 0,
+                "ts": 1668767338674,
+                "wkRange": null,
+                "mnRange": null,
+                "dyChange": -0.04,
+                "wkChange": null,
+                "mnChange": null,
+                "crossedHigh": false,
+                "crossedLow": false,
+                "away52wH": null,
+                "away52wL": null,
+                "turnover": null,
+                "volBreakout": null,
+                "low52w": null,
+                "high52w": null
+            }
+        ]
+    },
+    "NFMCG": {
+        "data": [
+            {
+                "sid": ".NIFTYFMCG",
+                "type": "index",
+                "exchange": "NSE",
+                "price": 43747,
+                "o": 43915.65,
+                "h": 43958.8,
+                "l": 43447.9,
+                "c": 43845.1,
+                "change": -98.1,
+                "vol": 0,
+                "ts": 1668767338674,
+                "wkRange": null,
+                "mnRange": null,
+                "dyChange": -0.22,
+                "wkChange": null,
+                "mnChange": null,
+                "crossedHigh": false,
+                "crossedLow": false,
+                "away52wH": null,
+                "away52wL": null,
+                "turnover": null,
+                "volBreakout": null,
+                "low52w": null,
+                "high52w": null
+            }
+        ]
+    },
+    "NPharma": {
+        "data": [
+            {
+                "sid": ".NIPHARM",
+                "type": "index",
+                "exchange": "NSE",
+                "price": 12861.4,
+                "o": 12980.15,
+                "h": 12991.4,
+                "l": 12840.3,
+                "c": 12948.25,
+                "change": -86.85,
+                "vol": 0,
+                "ts": 1668767338674,
+                "wkRange": null,
+                "mnRange": null,
+                "dyChange": -0.67,
+                "wkChange": null,
+                "mnChange": null,
+                "crossedHigh": false,
+                "crossedLow": false,
+                "away52wH": null,
+                "away52wL": null,
+                "turnover": null,
+                "volBreakout": null,
+                "low52w": null,
+                "high52w": null
+            }
+        ]
+    }
+}

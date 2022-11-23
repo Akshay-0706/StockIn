@@ -58,13 +58,11 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   TextEditingController qtyController = TextEditingController();
 
   FutureOr<void> getInvestedStocks() {
-    print("Outside");
     futureInvestedStock =
         fetchStocks(pref.getString("email")!.replaceAll(".", "_"));
     futureInvestedStock.then((value) {
       investedStocks = value.investedStocks;
       getLtp();
-      print("Inside");
       timer = Timer.periodic(const Duration(seconds: 5), (Timer t) => getLtp());
     }).catchError((error) {
       getLtp();
