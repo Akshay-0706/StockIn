@@ -9,7 +9,7 @@ class Auth {
   static Future<User?> googleLogin() async {
     final googleSignIn = GoogleSignIn();
 
-    final googleUser = await googleSignIn.signIn();
+    final googleUser = await googleSignIn.signIn().catchError((error) => null);
 
     if (googleUser == null) return null;
 
@@ -27,8 +27,10 @@ class Auth {
   }
 
   static Future<void> googleLogout() async {
-    await SharedPreferences.getInstance()
-        .then((value) => value.remove("email"));
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove("email");
+    pref.setString("token", "Logged out");
+    globalToken.setToken("Logged out");
     await GoogleSignIn().signOut();
     await GoogleSignIn().disconnect();
     await FirebaseAuth.instance.signOut();

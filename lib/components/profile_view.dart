@@ -47,7 +47,8 @@ class ProfileView extends StatelessWidget {
                 ),
               ),
               errorWidget: (context, url, error) => Icon(
-                Icons.error_outline,
+                Icons.person,
+                size: getHeight(20),
                 color: Theme.of(context).primaryColorDark,
               ),
             ),

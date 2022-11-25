@@ -34,7 +34,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   late SharedPreferences pref;
   bool prefIsReady = false, validated = false, isModifying = false;
   late bool loggedIn;
-  late String token, newToken;
+  late String token = "", newToken;
   String mode = "Buy", hintText = "Search", buyingStock = "", sellingStock = "";
   int qty = 0;
   double price = 0;
@@ -59,12 +59,13 @@ class _PortFolioBodyState extends State<PortFolioBody> {
 
   FutureOr<void> getInvestedStocks() {
     futureInvestedStock =
-        // fetchStocks(pref.getString("email")!.replaceAll(".", "_"));
-        fetchStocks("akshay0706vhatkar@gmail_com");
+        fetchStocks(pref.getString("email")!.replaceAll(".", "_"));
     futureInvestedStock.then((value) {
       investedStocks = value.investedStocks;
       getLtp();
-      timer = Timer.periodic(const Duration(seconds: 5), (Timer t) => getLtp());
+      timer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
+        if (loggedIn) getLtp();
+      });
     }).catchError((error) {
       getLtp();
     });
@@ -73,14 +74,24 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   void checkSession() async {
     newToken = globalToken.getToken();
     if (newToken.isNotEmpty) token = newToken;
-    if (loggedIn && JwtDecoder.isExpired(token) && mounted) {
+    if (newToken == "Logged out" && mounted) {
       setState(() {
         loggedIn = false;
       });
-    } else if (!JwtDecoder.isExpired(token) && mounted) {
-      setState(() {
-        loggedIn = true;
-      });
+    } else {
+      if (loggedIn &&
+          token.isNotEmpty &&
+          JwtDecoder.isExpired(token) &&
+          mounted) {
+        setState(() {
+          loggedIn = false;
+        });
+      } else if (token.isNotEmpty && !JwtDecoder.isExpired(token) && mounted) {
+        setState(() {
+          loggedIn = true;
+          getInvestedStocks();
+        });
+      }
     }
   }
 
@@ -89,17 +100,22 @@ class _PortFolioBodyState extends State<PortFolioBody> {
     sharedPrefInstance.then((value) {
       pref = value;
       prefIsReady = true;
-      loggedIn = true;
-      if (pref.containsKey("token")) token = pref.getString("token")!;
-      // checkSession();
+      loggedIn = pref.containsKey("email");
+      if (pref.containsKey("token") &&
+          pref.getString("token") != "Logged out") {
+        token = pref.getString("token")!;
+      }
 
-      // tokenTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      //   checkSession();
-      // });
+      checkSession();
 
-      setState(() {});
-
-      getInvestedStocks();
+      tokenTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        checkSession();
+      });
+      if (loggedIn) {
+        getInvestedStocks();
+      } else {
+        setState(() {});
+      }
     });
 
     super.initState();
@@ -109,7 +125,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   void dispose() {
     super.dispose();
     timer.cancel();
-    // tokenTimer.cancel();
+    tokenTimer.cancel();
   }
 
   void getLtp() {
@@ -203,7 +219,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
       isModifying = true;
     });
     putStock(
-            "akshay0706vhatkar@gmail_com",
+            pref.getString("email")!.replaceAll(".", "_"),
             mode,
             mode == "Buy" ? buyingStock : sellingStock,
             price.toString(),

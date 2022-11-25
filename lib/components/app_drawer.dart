@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockin/database/jwt.dart';
 import 'package:stockin/global.dart';
 
-import '../database/sign_in.dart';
+import '../database/auth.dart';
 import '../size.dart';
 import 'drawer_menu.dart';
 import 'login_button.dart';
@@ -71,7 +71,11 @@ class _AppDrawerState extends State<AppDrawer> {
       setState(() {
         prefIsReady = true;
         loggedIn = pref.containsKey("email");
-        if (pref.containsKey("token")) token = pref.getString("token")!;
+        if (pref.containsKey("token") &&
+            pref.getString("token") != "Logged out") {
+          token = pref.getString("token")!;
+          print(token);
+        }
       });
     });
 
@@ -88,7 +92,8 @@ class _AppDrawerState extends State<AppDrawer> {
 
   startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (loggedIn) {
+      if (pref.containsKey("token") &&
+          pref.getString("token") != "Logged out") {
         if (!JwtDecoder.isExpired(token)) {
           isDialogShown = false;
         }
@@ -109,6 +114,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     Radius.circular(8),
                   ),
                 ),
+                backgroundColor: const Color(0xFF080808),
                 title: Text(
                   "Session expired!",
                   textAlign: TextAlign.center,
@@ -150,7 +156,6 @@ class _AppDrawerState extends State<AppDrawer> {
                     ),
                   ],
                 ),
-                backgroundColor: Theme.of(context).backgroundColor,
               ),
             ),
           );
@@ -255,20 +260,27 @@ class _AppDrawerState extends State<AppDrawer> {
                   // print("Token");
                   // print("Generation...");
 
-                  token = await JWT.signTheToken(user!);
+                  if (user == null) {
+                    setState(() {
+                      loggedIn = false;
+                      logginIn = false;
+                    });
+                  } else {
+                    token = await JWT.signTheToken(user!);
 
-                  globalToken.setToken(token);
-                  // print("Done!");
+                    globalToken.setToken(token);
+                    // print("Done!");
 
-                  pref.setString("email", user!.email!);
-                  pref.setString("name", user!.displayName!);
-                  pref.setString("image", user!.photoURL!);
-                  pref.setString("token", token);
+                    pref.setString("email", user!.email!);
+                    pref.setString("name", user!.displayName!);
+                    pref.setString("image", user!.photoURL!);
+                    pref.setString("token", token);
 
-                  setState(() {
-                    loggedIn = true;
-                    logginIn = false;
-                  });
+                    setState(() {
+                      loggedIn = true;
+                      logginIn = false;
+                    });
+                  }
                 },
                 onHover: (value) {
                   setState(() {

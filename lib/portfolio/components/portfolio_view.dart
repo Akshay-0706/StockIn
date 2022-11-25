@@ -36,7 +36,7 @@ class PortfolioView extends StatelessWidget {
             child: CachedNetworkImage(
               width: getHeight(100),
               height: getHeight(100),
-              imageUrl: "",
+              imageUrl: pref.getString("image")!,
               placeholder: (context, url) => Container(
                 width: getHeight(100),
                 height: getHeight(100),
@@ -62,8 +62,7 @@ class PortfolioView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              // pref.getString("name")!,
-              "Akshay Vhatkar",
+              pref.getString("name")!,
               overflow: TextOverflow.clip,
               style: TextStyle(
                   color: Theme.of(context).primaryColorDark,
@@ -72,8 +71,7 @@ class PortfolioView extends StatelessWidget {
             ),
             SizedBox(height: getHeight(10)),
             Text(
-              // pref.getString("email")!,
-              "akshay0706vhatkar@gmail.com",
+              pref.getString("email")!,
               style: TextStyle(
                 color: Theme.of(context).primaryColorLight,
                 fontSize: getHeight(18),
