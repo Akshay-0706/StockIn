@@ -28,7 +28,7 @@ class Button extends StatelessWidget {
                 : const Color(0xFF1CA7EC),
             isHovered
                 ? const Color(0xFF1F2F98).withOpacity(0.5)
-                : const Color(0xFF1F2F98),
+                : const Color(0xFF1F2F98).withOpacity(0.8),
           ],
         ),
         boxShadow: [

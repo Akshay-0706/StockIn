@@ -16,11 +16,12 @@ class IndicesBody extends StatefulWidget {
 
 class _IndicesBodyState extends State<IndicesBody>
     with SingleTickerProviderStateMixin {
-  late Future<Indices> futureIndices;
+  late Indices allIndices;
   late Timer timer;
   Color positive = const Color(0xff00a25b), negative = const Color(0xfffc5a5a);
   String mode = "nse";
   late TabController tabController;
+  bool areIndicesReady = false;
 
   // final selectedColor = Theme.of(context).primaryColorDark;
   final unselectedColor = const Color(0xff5f6368);
@@ -43,8 +44,12 @@ class _IndicesBodyState extends State<IndicesBody>
   };
 
   void callStock() async {
-    setState(() {
-      futureIndices = fetchIndices(mode);
+    fetchIndices(mode).then((value) {
+      if (value != null) {
+        setState(() {
+          allIndices = value;
+        });
+      }
     });
   }
 
@@ -52,10 +57,17 @@ class _IndicesBodyState extends State<IndicesBody>
   void initState() {
     tabController = TabController(length: 2, vsync: this);
 
-    futureIndices = fetchIndices(mode);
+    fetchIndices(mode).then((value) {
+      if (value != null) {
+        allIndices = value;
+        setState(() {
+          areIndicesReady = true;
+        });
+      }
+    });
 
     timer =
-        Timer.periodic(const Duration(seconds: 2), (Timer t) => callStock());
+        Timer.periodic(const Duration(seconds: 1), (Timer t) => callStock());
     super.initState();
   }
 
@@ -136,143 +148,139 @@ class _IndicesBodyState extends State<IndicesBody>
               ),
             ),
             SizedBox(height: getHeight(20)),
-            FutureBuilder<Indices>(
-              future: futureIndices,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData || snapshot.data!.type != mode) {
-                  return const LinearProgressIndicator();
-                }
+            if (!areIndicesReady)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: getHeight(20)),
+                child: LinearProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            if (areIndicesReady)
+              ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse
+                  },
+                ),
+                child: SizedBox(
+                  height: SizeConfig.height * 0.85,
+                  child: GridView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: allIndices.indices.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: getCardNumbers(),
+                      ),
+                      itemBuilder: (context, index) {
+                        String indexValue = allIndices
+                            .indices[index].index.entries
+                            .elementAt(mode == "nse" ? 1 : 0)
+                            .value;
+                        double last = double.parse(allIndices
+                            .indices[index].index.entries
+                            .elementAt(mode == "nse" ? 3 : 1)
+                            .value
+                            .toString());
+                        double variation = double.parse(allIndices
+                            .indices[index].index.entries
+                            .elementAt(mode == "nse" ? 4 : 2)
+                            .value
+                            .toString());
+                        double percentageChange = double.parse(allIndices
+                            .indices[index].index.entries
+                            .elementAt(mode == "nse" ? 5 : 3)
+                            .value
+                            .toString());
 
-                return ScrollConfiguration(
-                  behavior: ScrollConfiguration.of(context).copyWith(
-                    dragDevices: {
-                      PointerDeviceKind.touch,
-                      PointerDeviceKind.mouse
-                    },
-                  ),
-                  child: SizedBox(
-                    height: SizeConfig.height * 0.85,
-                    child: GridView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: snapshot.data!.indices.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: getCardNumbers(),
-                        ),
-                        itemBuilder: (context, index) {
-                          String indexValue = snapshot
-                              .data!.indices[index].index.entries
-                              .elementAt(mode == "nse" ? 1 : 0)
-                              .value;
-                          double last = double.parse(snapshot
-                              .data!.indices[index].index.entries
-                              .elementAt(mode == "nse" ? 3 : 1)
-                              .value
-                              .toString());
-                          double variation = double.parse(snapshot
-                              .data!.indices[index].index.entries
-                              .elementAt(mode == "nse" ? 4 : 2)
-                              .value
-                              .toString());
-                          double percentageChange = double.parse(snapshot
-                              .data!.indices[index].index.entries
-                              .elementAt(mode == "nse" ? 5 : 3)
-                              .value
-                              .toString());
-
-                          late Color color;
-                          if (percentageChange >= 1) {
-                            color = positive;
-                          } else if (percentageChange <= -1) {
-                            color = negative;
+                        late Color color;
+                        if (percentageChange >= 1) {
+                          color = positive;
+                        } else if (percentageChange <= -1) {
+                          color = negative;
+                        } else {
+                          if (percentageChange >= 0) {
+                            color = positive.withOpacity(percentageChange);
                           } else {
-                            if (percentageChange >= 0) {
-                              color = positive.withOpacity(percentageChange);
-                            } else {
-                              color =
-                                  negative.withOpacity(percentageChange * -1);
-                            }
+                            color = negative.withOpacity(percentageChange * -1);
                           }
+                        }
 
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(8),
-                                // boxShadow: [
-                                //   BoxShadow(
-                                //     color: Colors.grey.withOpacity(
-                                //         opacity > 0.5 ? 0.5 : opacity),
-                                //     spreadRadius: 5,
-                                //     blurRadius: 7,
-                                //     offset: Offset(2, 4),
-                                //   )
-                                // ],
-                                //border: Border.all(color: Theme.of(context).primaryColorDark)
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    SizedBox(
-                                      height: getHeight(50),
-                                      child: Text(
-                                        indexValue,
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .primaryColorDark,
-                                          fontSize: getHeight(12),
-                                          fontWeight: FontWeight.bold,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        maxLines: 3,
-                                      ),
-                                    ),
-                                    // const Spacer(),
-                                    Text(
-                                      last.toString(),
+                        return Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: color,
+                              borderRadius: BorderRadius.circular(8),
+                              // boxShadow: [
+                              //   BoxShadow(
+                              //     color: Colors.grey.withOpacity(
+                              //         opacity > 0.5 ? 0.5 : opacity),
+                              //     spreadRadius: 5,
+                              //     blurRadius: 7,
+                              //     offset: Offset(2, 4),
+                              //   )
+                              // ],
+                              //border: Border.all(color: Theme.of(context).primaryColorDark)
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  SizedBox(
+                                    height: getHeight(50),
+                                    child: Text(
+                                      indexValue,
                                       style: TextStyle(
                                         color:
-                                            Theme.of(context).primaryColorLight,
+                                            Theme.of(context).primaryColorDark,
+                                        fontSize: getHeight(12),
+                                        fontWeight: FontWeight.bold,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 3,
                                     ),
-                                    // const Spacer(),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          variation.toString(),
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .primaryColorLight,
-                                          ),
+                                  ),
+                                  // const Spacer(),
+                                  Text(
+                                    last.toString(),
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).primaryColorLight,
+                                    ),
+                                  ),
+                                  // const Spacer(),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(
+                                        variation.toString(),
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .primaryColorLight,
                                         ),
-                                        Text(
-                                          "$percentageChange%",
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .primaryColorLight,
-                                          ),
+                                      ),
+                                      Text(
+                                        "$percentageChange%",
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .primaryColorLight,
                                         ),
-                                      ],
-                                    )
-                                  ],
-                                ),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
                             ),
-                          );
-                        }),
-                  ),
-                );
-              },
-            ),
-            SizedBox(
-              height: getHeight(20),
-            )
+                          ),
+                        );
+                      }),
+                ),
+              ),
+            SizedBox(height: getHeight(20))
           ],
         ),
       ),

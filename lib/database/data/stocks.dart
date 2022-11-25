@@ -1,5 +1,5 @@
 List<Map<String, String>> stocks = [
-  {"name": "Coastal Corporation Limited-RE", "code": "COAST-RE"},
+  // {"name": "Coastal Corporation Limited-RE", "code": "COAST-RE"},
   {"name": "Dhampur Bio Organics Limited", "code": "DBOL"},
   {"name": "GRM Overseas Limited", "code": "GRMOVER"},
   {"name": "Dreamfolks Services Limited", "code": "DREAMFOLKS"},

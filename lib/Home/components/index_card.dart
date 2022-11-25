@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../size.dart';
 
@@ -26,17 +26,19 @@ class IndexCard extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(vertical: getHeight(20)),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
             width: getHeight(220),
             height: getHeight(120),
             decoration: BoxDecoration(
-                // color: Theme.of(context).primaryColorLight.withAlpha(10),
-                gradient: gradient,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  if (color != null)
-                    BoxShadow(color: color!, blurRadius: 7, spreadRadius: 5),
-                ]),
+              // color: Theme.of(context).primaryColorDark.withAlpha(200),
+              gradient: gradient,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                if (color != null)
+                  BoxShadow(color: color!, blurRadius: 10, spreadRadius: 5),
+              ],
+            ),
             child: Padding(
               padding: EdgeInsets.symmetric(
                   vertical: getHeight(20), horizontal: getHeight(20)),
@@ -89,18 +91,16 @@ class IndexCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "Volume:",
+                        "Value:",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: getHeight(14),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(
-                        width: getHeight(10),
-                      ),
+                      SizedBox(width: getHeight(10)),
                       Text(
-                        "\u{20B9} $volume",
+                        volume,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: getHeight(14),

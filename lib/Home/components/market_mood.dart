@@ -33,9 +33,11 @@ class _MarketMoodState extends State<MarketMood> {
       marketMood =
           double.parse(double.parse(value.toString()).toStringAsFixed(2));
       getMood();
-      setState(() {
-        isMarketMoodReady = true;
-      });
+      if (mounted) {
+        setState(() {
+          isMarketMoodReady = true;
+        });
+      }
     });
     super.initState();
   }
@@ -78,20 +80,20 @@ class _MarketMoodState extends State<MarketMood> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const AnimatedTexts(
+                    AnimatedTexts(
                       first: "Fear",
                       second: "Extreme Fear",
-                      firstColor: Colors.orangeAccent,
-                      secondColor: Colors.greenAccent,
+                      firstColor: Theme.of(context).primaryColorDark,
+                      secondColor: Theme.of(context).primaryColorDark,
                       crossAxisAlignment: CrossAxisAlignment.end,
                     ),
                     MarketMoodRenderer(
                         value: isMarketMoodReady ? marketMood : 0),
-                    const AnimatedTexts(
+                    AnimatedTexts(
                       first: "Greed",
                       second: "Extreme Greed",
-                      firstColor: Colors.deepOrangeAccent,
-                      secondColor: Colors.redAccent,
+                      firstColor: Theme.of(context).primaryColorDark,
+                      secondColor: Theme.of(context).primaryColorDark,
                       crossAxisAlignment: CrossAxisAlignment.start,
                     ),
                   ],
@@ -265,7 +267,7 @@ class _MarketMoodState extends State<MarketMood> {
                         iconName: "extremeGreed"),
                   if (isMarketMoodReady)
                     const MMIInfoCards(
-                      borderColor: Colors.greenAccent,
+                      borderColor: Colors.green,
                       iconName: "extremeFear",
                       zoneName: "Extreme Fear (<25)",
                       zoneInfo:
@@ -273,7 +275,7 @@ class _MarketMoodState extends State<MarketMood> {
                     ),
                   if (isMarketMoodReady)
                     const MMIInfoCards(
-                      borderColor: Colors.redAccent,
+                      borderColor: Colors.red,
                       iconName: "extremeGreed",
                       zoneName: "Extreme Greed (>75)",
                       zoneInfo:

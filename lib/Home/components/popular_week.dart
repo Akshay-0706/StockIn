@@ -33,9 +33,11 @@ class _PopularWeekState extends State<PopularWeek> {
   void getPopular() {
     fetchPopular(widget.trend).then((value) {
       popular = value.popular;
-      setState(() {
-        isTrendReady = true;
-      });
+      if (mounted) {
+        setState(() {
+          isTrendReady = true;
+        });
+      }
     });
   }
 
@@ -95,17 +97,23 @@ class _PopularWeekState extends State<PopularWeek> {
                         : trend[index] == popular[index].value
                             ? null
                             : popular[index].value > trend[index]
-                                ? Colors.greenAccent.withAlpha(40)
-                                : Colors.redAccent.withAlpha(40);
+                                ? Colors.greenAccent
+                                : Colors.redAccent;
                     if (trend.length != popular.length) {
                       trend.add(popular[index].value);
                     }
-                    trend[index] = popular[index].value;
+                    // print(1 -
+                    //     (popular[0].perChg.abs() -
+                    //         popular[index].perChg.abs()));
+                    // trend[index] = popular[index].value;
+                    // color = widget.trend == "Gainer"
+                    //     ? Colors.green
+                    //     : Colors.red;
+
                     return PopularCard(
                       index: index,
                       length: popular.length,
                       code: popular[index].code,
-                      name: popular[index].name,
                       value: popular[index].value,
                       perChg: popular[index].perChg,
                       changeTab: widget.changeTab,

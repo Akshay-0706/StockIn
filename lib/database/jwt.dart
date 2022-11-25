@@ -8,7 +8,7 @@ class JWT {
     final response = (await http.get(Uri.parse(
         "${GlobalParams.server}/jwt/sign/${user.uid}/${user.email!.replaceAll(".", "_")}")));
 
-    print("Token generated: ${response.body}");
+    // print("Token generated: ${response.body}");
 
     return response.body.toString();
   }

@@ -27,7 +27,7 @@ class DashBoard extends StatelessWidget {
             gradient: LinearGradient(
                 colors: [
                   Theme.of(context).backgroundColor,
-                  const Color(0xFF131C2D).withOpacity(0.7),
+                  Theme.of(context).backgroundColor.withOpacity(0.5),
                 ],
                 begin: const FractionalOffset(0.0, 0.0),
                 end: const FractionalOffset(1.0, 0.0),

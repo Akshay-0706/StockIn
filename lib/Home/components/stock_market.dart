@@ -47,9 +47,11 @@ class _StockMarketState extends State<StockMarket> {
     // print("Called");
     fetchTopIndices().then((value) {
       topIndices = value.topIndices;
-      setState(() {
-        areIndicesReady = true;
-      });
+      if (mounted) {
+        setState(() {
+          areIndicesReady = true;
+        });
+      }
     });
   }
 
@@ -159,6 +161,7 @@ class _StockMarketState extends State<StockMarket> {
                               .toString()
                               .replaceAll(",", "")));
                         }
+
                         indices[index] = double.parse(topIndices[index]
                             .entries
                             .first
@@ -179,10 +182,14 @@ class _StockMarketState extends State<StockMarket> {
                               .value
                               .toString()
                               .replaceAll(",", ""),
-                          change:
-                              topIndices[index].entries.last.value.toString(),
+                          change: (double.parse(topIndices[index]
+                                  .entries
+                                  .last
+                                  .value
+                                  .toString()))
+                              .toStringAsFixed(2),
                           gradient: IndexColors.indexGradients[index],
-                          color: null,
+                          color: color,
                         );
                       } else {
                         return IndexCardShimmer(

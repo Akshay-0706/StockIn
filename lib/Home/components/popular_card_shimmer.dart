@@ -17,6 +17,7 @@ class PopularCardShimmer extends StatelessWidget {
     return Row(
       children: [
         Container(
+          width: getHeight(150),
           decoration: BoxDecoration(
             color: Theme.of(context).primaryColorLight.withAlpha(10),
             borderRadius: BorderRadius.circular(8),
@@ -26,50 +27,47 @@ class PopularCardShimmer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Shimmer.fromColors(
-                      baseColor: baseColor,
-                      highlightColor: highlightColor,
-                      child: Container(
-                        width: getHeight(40),
-                        height: getHeight(40),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                              Theme.of(context).primaryColorLight.withAlpha(20),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: getHeight(10)),
-                    Shimmer.fromColors(
-                      baseColor: baseColor,
-                      highlightColor: highlightColor,
-                      child: Container(
-                        width: getHeight(50),
-                        height: getHeight(20),
-                        decoration: BoxDecoration(
-                          color:
-                              Theme.of(context).primaryColorLight.withAlpha(20),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: getHeight(10)),
+                // Shimmer.fromColors(
+                //   baseColor: baseColor,
+                //   highlightColor: highlightColor,
+                //   child: Container(
+                //     width: getHeight(40),
+                //     height: getHeight(40),
+                //     decoration: BoxDecoration(
+                //       shape: BoxShape.circle,
+                //       color:
+                //           Theme.of(context).primaryColorLight.withAlpha(20),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(width: getHeight(7)),
                 Shimmer.fromColors(
                   baseColor: baseColor,
                   highlightColor: highlightColor,
                   child: Container(
-                    width: getHeight(100),
-                    height: getHeight(10),
+                    width: getHeight(50),
+                    height: getHeight(14),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColorLight.withAlpha(20),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                 ),
+                // Shimmer.fromColors(
+                //   baseColor: baseColor,
+                //   highlightColor: highlightColor,
+                //   child: Container(
+                //     width: getHeight(100),
+                //     height: getHeight(10),
+                //     decoration: BoxDecoration(
+                //       color: Theme.of(context).primaryColorLight.withAlpha(20),
+                //       borderRadius: BorderRadius.circular(4),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(height: getHeight(7)),
+                Divider(
+                    color: Theme.of(context).primaryColorDark.withAlpha(40)),
                 SizedBox(height: getHeight(7)),
                 Shimmer.fromColors(
                   baseColor: baseColor,
@@ -79,23 +77,43 @@ class PopularCardShimmer extends StatelessWidget {
                     height: getHeight(20),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColorLight.withAlpha(20),
-                      borderRadius: BorderRadius.circular(2),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
+                ),
+                SizedBox(height: getHeight(10)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Shimmer.fromColors(
+                      baseColor: baseColor,
+                      highlightColor: highlightColor,
+                      child: Container(
+                        width: getHeight(40),
+                        height: getHeight(14),
+                        decoration: BoxDecoration(
+                          color:
+                              Theme.of(context).primaryColorLight.withAlpha(20),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: baseColor,
+                      highlightColor: highlightColor,
+                      child: Container(
+                        width: getHeight(40),
+                        height: getHeight(14),
+                        decoration: BoxDecoration(
+                          color:
+                              Theme.of(context).primaryColorLight.withAlpha(20),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: getHeight(7)),
-                Shimmer.fromColors(
-                  baseColor: baseColor,
-                  highlightColor: highlightColor,
-                  child: Container(
-                    width: getHeight(50),
-                    height: getHeight(10),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColorLight.withAlpha(20),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),

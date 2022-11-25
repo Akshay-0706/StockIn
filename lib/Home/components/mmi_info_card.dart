@@ -19,7 +19,7 @@ class MMIInfoCards extends StatelessWidget {
     return Container(
       width: 270,
       decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).primaryColor.withAlpha(10),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

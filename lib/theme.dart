@@ -78,18 +78,18 @@ class NewTheme {
 
 class Global {
   // Light mode colors
-  // static Color primary = const Color(0xff42C2FF);
+  // static Color primary = const Color(0xFF1B98E0);
   // static Color foreground = Colors.black;
   // static Color foregroundAlt = Colors.black54;
-  // static Color background = Colors.white;
-  // static Color drawerBg = const Color.fromRGBO(248, 248, 248, 1);
+  // static Color background = Color(0xFFC9E9EC);
+  // static Color drawerBg = Color(0xFFE2F5F7);
 
   // Dark mode colors
-  static Color? primaryDark = const Color(0xFF1CA7EC);
+  static Color? primaryDark = Color(0xFF1B98E0);
   static Color foregroundDark = Colors.white;
   static Color foregroundAltDark = Colors.white54;
-  static Color backgroundDark = const Color(0xFF0B0F19);
-  static Color drawerBgDark = const Color(0xFF131C2D).withOpacity(0.4);
+  static Color backgroundDark = Color(0xFF040404);
+  static Color drawerBgDark = Color(0xFF202020);
 }
 
 class IndexColors {

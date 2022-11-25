@@ -25,14 +25,12 @@ class DrawerMenu extends StatelessWidget {
           cursor: SystemMouseCursors.click,
           child: InkWell(
             onTap: tap,
-            hoverColor: isSelected ? null : Colors.white.withOpacity(0.9),
+            hoverColor: isSelected ? null : Colors.white,
             borderRadius: BorderRadius.circular(4),
             child: AnimatedContainer(
               duration: GlobalParams.duration,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? Theme.of(context).primaryColor.withOpacity(0.2)
-                    : null,
+                color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.8) : null,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Padding(
@@ -46,11 +44,7 @@ class DrawerMenu extends StatelessWidget {
                     SvgPicture.asset(
                       "assets/icons/drawer/$iconPath.svg",
                       width: getHeight(18),
-                      color: isSelected
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context)
-                              .primaryColorLight
-                              .withOpacity(0.7),
+                      color: Theme.of(context).primaryColorDark,
                     ),
                     if (!shrink) SizedBox(width: getHeight(10)),
                     if (!shrink)
@@ -58,10 +52,10 @@ class DrawerMenu extends StatelessWidget {
                         title,
                         style: TextStyle(
                           color: isSelected
-                              ? Theme.of(context).primaryColor
+                              ? Theme.of(context).primaryColorDark
                               : Theme.of(context)
                                   .primaryColorLight
-                                  .withOpacity(0.7),
+                                  .withOpacity(0.5),
                           fontSize: getHeight(14),
                         ),
                       ),

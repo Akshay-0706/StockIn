@@ -9,10 +9,10 @@ class MarketMoodRenderer extends StatelessWidget {
 
   final double value;
   final List<Color> gradient = [
-    Colors.greenAccent,
-    Colors.orangeAccent,
-    Colors.deepOrangeAccent,
-    Colors.redAccent
+    Colors.green,
+    Colors.orange,
+    Colors.deepOrange,
+    Colors.red
   ];
   final List<double> stops = [0.25, 0.5, 0.75, 1];
 

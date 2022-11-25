@@ -32,12 +32,12 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   final Future<SharedPreferences> sharedPrefInstance =
       SharedPreferences.getInstance();
   late SharedPreferences pref;
-  bool prefIsReady = false;
-  late bool loggedIn = true;
+  bool prefIsReady = false, validated = false, isModifying = false;
+  late bool loggedIn;
   late String token, newToken;
-  String mode = "Buy", hintText = "Search", newStock = "";
-  late int qty;
-  late double price;
+  String mode = "Buy", hintText = "Search", buyingStock = "", sellingStock = "";
+  int qty = 0;
+  double price = 0;
 
   late Future<StockLtp> futureStock;
   late Future<Stocks> futureInvestedStock;
@@ -59,7 +59,8 @@ class _PortFolioBodyState extends State<PortFolioBody> {
 
   FutureOr<void> getInvestedStocks() {
     futureInvestedStock =
-        fetchStocks(pref.getString("email")!.replaceAll(".", "_"));
+        // fetchStocks(pref.getString("email")!.replaceAll(".", "_"));
+        fetchStocks("akshay0706vhatkar@gmail_com");
     futureInvestedStock.then((value) {
       investedStocks = value.investedStocks;
       getLtp();
@@ -72,11 +73,11 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   void checkSession() async {
     newToken = globalToken.getToken();
     if (newToken.isNotEmpty) token = newToken;
-    if (loggedIn && JwtDecoder.isExpired(token)) {
+    if (loggedIn && JwtDecoder.isExpired(token) && mounted) {
       setState(() {
         loggedIn = false;
       });
-    } else if (!JwtDecoder.isExpired(token)) {
+    } else if (!JwtDecoder.isExpired(token) && mounted) {
       setState(() {
         loggedIn = true;
       });
@@ -88,13 +89,15 @@ class _PortFolioBodyState extends State<PortFolioBody> {
     sharedPrefInstance.then((value) {
       pref = value;
       prefIsReady = true;
-      loggedIn = pref.containsKey("email");
-      token = pref.getString("token")!;
-      checkSession();
+      loggedIn = true;
+      if (pref.containsKey("token")) token = pref.getString("token")!;
+      // checkSession();
 
-      tokenTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        checkSession();
-      });
+      // tokenTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      //   checkSession();
+      // });
+
+      setState(() {});
 
       getInvestedStocks();
     });
@@ -106,7 +109,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   void dispose() {
     super.dispose();
     timer.cancel();
-    tokenTimer.cancel();
+    // tokenTimer.cancel();
   }
 
   void getLtp() {
@@ -159,36 +162,67 @@ class _PortFolioBodyState extends State<PortFolioBody> {
               (element.ltp * element.qty / totalLtp * 100)
                   .toStringAsFixed(2))));
     }
-    newStock = stocksForSell.isEmpty ? "" : stocksForSell[0];
-    setState(() {
-      portfolioIsReady = true;
-    });
+    sellingStock = stocksForSell.isEmpty
+        ? ""
+        : sellingStock.isEmpty
+            ? stocksForSell[0]
+            : sellingStock;
+    if (mounted) {
+      setState(() {
+        portfolioIsReady = true;
+      });
+    }
   }
 
   void onChanged(bool forQty, String value) {
     if (forQty) {
       qty = int.parse(value);
+      validator();
     } else {
       price = double.parse(value);
+      validator();
     }
   }
 
   void validator() {
-    if (newStock.isNotEmpty && qty != 0 && price != 0) {
-      modifyStocks();
+    if (mounted) {
+      setState(() {
+        if ((buyingStock.isNotEmpty || sellingStock.isNotEmpty) &&
+            qty != 0 &&
+            price != 0) {
+          validated = true;
+        } else {
+          validated = false;
+        }
+      });
     }
   }
 
   void modifyStocks() async {
-    putStock(pref.getString("email")!.replaceAll(".", "_"), mode, newStock,
-            price.toString(), qty.toString())
+    setState(() {
+      isModifying = true;
+    });
+    putStock(
+            "akshay0706vhatkar@gmail_com",
+            mode,
+            mode == "Buy" ? buyingStock : sellingStock,
+            price.toString(),
+            qty.toString())
         .then((value) {
-      setState(() {
-        newStock = "";
-        hintText = "Search";
-        qtyController.clear();
-        priceController.clear();
-      });
+      if (mounted) {
+        setState(() {
+          isModifying = false;
+          validated = false;
+          mode = "Buy";
+          buyingStock = "";
+          sellingStock = "";
+          hintText = "Search";
+          qtyController.clear();
+          priceController.clear();
+          qty = 0;
+          price = 0;
+        });
+      }
 
       timer.cancel();
       getInvestedStocks();
@@ -199,7 +233,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          vertical: getHeight(40), horizontal: getHeight(20)),
+          vertical: getHeight(40), horizontal: getHeight(40)),
       child: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(
           dragDevices: {
@@ -374,8 +408,8 @@ class _PortFolioBodyState extends State<PortFolioBody> {
       children: [
         if (mode == "Sell")
           CustomDropdownButton2(
-            hint: newStock,
-            value: newStock,
+            hint: sellingStock,
+            value: sellingStock,
             buttonWidth: getHeight(300),
             buttonHeight: getHeight(50),
             dropdownItems: stocksForSell,
@@ -394,9 +428,11 @@ class _PortFolioBodyState extends State<PortFolioBody> {
             icon: const FaIcon(Icons.arrow_drop_down_rounded),
             iconSize: getHeight(20),
             onChanged: (value) {
-              setState(() {
-                newStock = value!;
-              });
+              if (mounted) {
+                setState(() {
+                  sellingStock = value!;
+                });
+              }
             },
           ),
         if (mode == "Buy")
@@ -407,7 +443,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
                 Padding(
                   padding: const EdgeInsets.all(15),
                   child: Text(
-                    hintText.isEmpty ? newStock : "",
+                    hintText.isEmpty ? buyingStock : "",
                     style: TextStyle(
                       color: Theme.of(context).primaryColorDark,
                       fontSize: getHeight(14),
@@ -438,9 +474,12 @@ class _PortFolioBodyState extends State<PortFolioBody> {
                   onItemSelected: (item) {
                     if (item != null) {
                       hintText = "";
-                      setState(() {
-                        newStock = (item as Map<String, String>).values.last;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          buyingStock =
+                              (item as Map<String, String>).values.last;
+                        });
+                      }
                     } else {
                       hintText = "Search";
                     }
@@ -471,9 +510,11 @@ class _PortFolioBodyState extends State<PortFolioBody> {
           icon: const FaIcon(Icons.arrow_drop_down_rounded),
           iconSize: getHeight(20),
           onChanged: (value) {
-            setState(() {
-              mode = value!;
-            });
+            if (stocksForSell.isNotEmpty && mounted) {
+              setState(() {
+                mode = value!;
+              });
+            }
           },
         ),
         const Spacer(),
@@ -481,7 +522,9 @@ class _PortFolioBodyState extends State<PortFolioBody> {
         CustomTextField(
           onChanged: onChanged,
           forQty: true,
-          maxQty: mode == "Sell" ? stockQty[newStock]! : 0,
+          maxQty: mode == "Sell" && stockQty.containsKey(sellingStock)
+              ? stockQty[sellingStock]!
+              : 0,
           forBuy: mode == "Buy",
           controller: qtyController,
         ),
@@ -489,29 +532,42 @@ class _PortFolioBodyState extends State<PortFolioBody> {
         CustomTextField(
           onChanged: onChanged,
           forQty: false,
-          maxQty: mode == "Sell" ? stockQty[newStock]! : 0,
+          maxQty: mode == "Sell" && stockQty.containsKey(sellingStock)
+              ? stockQty[sellingStock]!
+              : 0,
           forBuy: mode == "Buy",
           controller: priceController,
         ),
         SizedBox(width: getHeight(20)),
         InkWell(
-          onTap: () => validator(),
+          onTap: () => modifyStocks(),
           borderRadius: BorderRadius.circular(8),
           child: Container(
             width: getHeight(100),
             height: getHeight(50),
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColorDark.withOpacity(0.8),
+              color: validated
+                  ? Theme.of(context).primaryColorDark
+                  : Theme.of(context).primaryColorDark.withOpacity(0.5),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
-              child: Text(
-                "Done",
-                style: TextStyle(
-                    color: Theme.of(context).backgroundColor,
-                    fontSize: getHeight(16),
-                    fontWeight: FontWeight.bold),
-              ),
+              child: !isModifying
+                  ? Text(
+                      "Done",
+                      style: TextStyle(
+                          color: Theme.of(context).backgroundColor,
+                          fontSize: getHeight(16),
+                          fontWeight: FontWeight.bold),
+                    )
+                  : SizedBox(
+                      width: getHeight(20),
+                      height: getHeight(20),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        color: Theme.of(context).backgroundColor,
+                      ),
+                    ),
             ),
           ),
         ),

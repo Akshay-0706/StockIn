@@ -28,8 +28,9 @@ class CustomTextField extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: getHeight(20)),
         child: TextFormField(
-          onChanged: (value) =>
-              forQty ? onChanged(true, value) : onChanged(false, value),
+          onChanged: (value) => forQty
+              ? onChanged(true, value.isEmpty ? "0" : value)
+              : onChanged(false, value.isEmpty ? "0.0" : value),
           controller: controller,
           validator: (value) => forQty
               ? null

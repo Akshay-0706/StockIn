@@ -71,7 +71,7 @@ class _AppDrawerState extends State<AppDrawer> {
       setState(() {
         prefIsReady = true;
         loggedIn = pref.containsKey("email");
-        token = pref.getString("token")!;
+        if (pref.containsKey("token")) token = pref.getString("token")!;
       });
     });
 
@@ -194,7 +194,7 @@ class _AppDrawerState extends State<AppDrawer> {
     return AnimatedContainer(
       duration: GlobalParams.duration,
       decoration: BoxDecoration(
-        color: Theme.of(context).drawerTheme.backgroundColor,
+        color: Theme.of(context).drawerTheme.backgroundColor!.withOpacity(0.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.9),
@@ -308,7 +308,7 @@ class _AppDrawerState extends State<AppDrawer> {
               "Explore & Watch",
               overflow: TextOverflow.clip,
               style: TextStyle(
-                color: Theme.of(context).primaryColorDark.withOpacity(0.3),
+                color: Theme.of(context).primaryColor,
                 fontSize: getHeight(14),
               ),
             ),
@@ -339,7 +339,7 @@ class _AppDrawerState extends State<AppDrawer> {
               "Stocks & Indices",
               overflow: TextOverflow.clip,
               style: TextStyle(
-                color: Theme.of(context).primaryColorDark.withOpacity(0.3),
+                color: Theme.of(context).primaryColor,
                 fontSize: getHeight(14),
               ),
             ),
@@ -370,7 +370,7 @@ class _AppDrawerState extends State<AppDrawer> {
               "Read more",
               overflow: TextOverflow.clip,
               style: TextStyle(
-                color: Theme.of(context).primaryColorDark.withOpacity(0.3),
+                color: Theme.of(context).primaryColor,
                 fontSize: getHeight(14),
               ),
             ),
