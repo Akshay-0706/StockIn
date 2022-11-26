@@ -48,7 +48,9 @@ class _PortFolioBodyState extends State<PortFolioBody> {
       totalTodaysPnl = 0,
       totalLtp = 0,
       totalPnl = 0;
-  bool portfolioIsReady = false;
+  bool portfolioIsReady = false,
+      isTimerInitialised = false,
+      isFetchingStopped = true;
   List<CircularStocks> circularStocks = [];
   List<String> stocksForSell = [];
 
@@ -66,8 +68,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
       timer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
         if (loggedIn) getLtp();
       });
-    }).catchError((error) {
-      getLtp();
+      isTimerInitialised = true;
     });
   }
 
@@ -77,6 +78,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
     if (newToken == "Logged out" && mounted) {
       setState(() {
         loggedIn = false;
+        isFetchingStopped = true;
       });
     } else {
       if (loggedIn &&
@@ -89,7 +91,11 @@ class _PortFolioBodyState extends State<PortFolioBody> {
       } else if (token.isNotEmpty && !JwtDecoder.isExpired(token) && mounted) {
         setState(() {
           loggedIn = true;
-          getInvestedStocks();
+          if (isFetchingStopped) {
+            isFetchingStopped = false;
+            if (isTimerInitialised) timer.cancel();
+            getInvestedStocks();
+          }
         });
       }
     }
@@ -108,7 +114,7 @@ class _PortFolioBodyState extends State<PortFolioBody> {
 
       checkSession();
 
-      tokenTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      tokenTimer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         checkSession();
       });
       if (loggedIn) {
@@ -215,9 +221,11 @@ class _PortFolioBodyState extends State<PortFolioBody> {
   }
 
   void modifyStocks() async {
-    setState(() {
-      isModifying = true;
-    });
+    if (mounted) {
+      setState(() {
+        isModifying = true;
+      });
+    }
     putStock(
             pref.getString("email")!.replaceAll(".", "_"),
             mode,
@@ -238,10 +246,10 @@ class _PortFolioBodyState extends State<PortFolioBody> {
           qty = 0;
           price = 0;
         });
+        isFetchingStopped = false;
+        timer.cancel();
+        getInvestedStocks();
       }
-
-      timer.cancel();
-      getInvestedStocks();
     });
   }
 
