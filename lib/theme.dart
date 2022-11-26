@@ -85,11 +85,11 @@ class Global {
   // static Color drawerBg = Color(0xFFE2F5F7);
 
   // Dark mode colors
-  static Color? primaryDark = Color(0xFF1B98E0);
+  static Color? primaryDark = const Color(0xFF1B98E0);
   static Color foregroundDark = Colors.white;
   static Color foregroundAltDark = Colors.white54;
-  static Color backgroundDark = Color(0xFF040404);
-  static Color drawerBgDark = Color(0xFF202020);
+  static Color backgroundDark = const Color(0xFF040404);
+  static Color drawerBgDark = const Color(0xFF202020);
 }
 
 class IndexColors {

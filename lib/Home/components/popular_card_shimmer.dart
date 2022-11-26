@@ -19,7 +19,7 @@ class PopularCardShimmer extends StatelessWidget {
         Container(
           width: getHeight(150),
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColorLight.withAlpha(10),
+            color: Theme.of(context).primaryColor.withAlpha(10),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Padding(

@@ -32,11 +32,13 @@ class _PopularWeekState extends State<PopularWeek> {
 
   void getPopular() {
     fetchPopular(widget.trend).then((value) {
-      popular = value.popular;
-      if (mounted) {
-        setState(() {
-          isTrendReady = true;
-        });
+      if (value != null) {
+        popular = value.popular;
+        if (mounted) {
+          setState(() {
+            isTrendReady = true;
+          });
+        }
       }
     });
   }

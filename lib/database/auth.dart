@@ -23,6 +23,9 @@ class Auth {
     final UserCredential userCredentials =
         await FirebaseAuth.instance.signInWithCredential(credential);
 
+    await http.post(Uri.parse(
+        "${GlobalParams.server}/firebase/${userCredentials.user!.email!.replaceAll(".", "_")}"));
+
     return userCredentials.user;
   }
 

@@ -74,7 +74,6 @@ class _AppDrawerState extends State<AppDrawer> {
         if (pref.containsKey("token") &&
             pref.getString("token") != "Logged out") {
           token = pref.getString("token")!;
-          print(token);
         }
       });
     });

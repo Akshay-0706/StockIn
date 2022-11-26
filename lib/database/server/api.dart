@@ -72,15 +72,21 @@ Future<void> putStock(
   }
 }
 
-Future<Popular> fetchPopular(String trend) async {
+Future<Popular?> fetchPopular(String trend) async {
   final response = await http
       // .get(Uri.parse("https://api.bseindia.com/BseIndiaAPI/api/$trend/w"));
       .get(Uri.parse("${GlobalParams.server}/trend/$trend"));
+  // .get(
+  //     Uri.parse(
+  //         "https://www1.nseindia.com/live_market/dynaContent/live_analysis/${trend.toLowerCase()}s/nifty${trend}s1.json"))
+  //         .catchError((error) => Response("{}", 200));
 
   if (response.statusCode == 200) {
-    return Popular.fromJson(jsonDecode(response.body));
+    return response.body == "{}"
+        ? null
+        : Popular.fromJson(jsonDecode(response.body));
   } else {
-    throw Exception("Failed to fetch popular");
+    throw Exception("Failed to fetch trends");
   }
 }
 
