@@ -104,13 +104,7 @@ class _PopularWeekState extends State<PopularWeek> {
                     if (trend.length != popular.length) {
                       trend.add(popular[index].value);
                     }
-                    // print(1 -
-                    //     (popular[0].perChg.abs() -
-                    //         popular[index].perChg.abs()));
                     // trend[index] = popular[index].value;
-                    // color = widget.trend == "Gainer"
-                    //     ? Colors.green
-                    //     : Colors.red;
 
                     return PopularCard(
                       index: index,

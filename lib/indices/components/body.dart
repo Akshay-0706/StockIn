@@ -46,8 +46,9 @@ class _IndicesBodyState extends State<IndicesBody>
   void callStock() async {
     fetchIndices(mode).then((value) {
       if (value != null) {
+        allIndices = value;
         setState(() {
-          allIndices = value;
+          areIndicesReady = true;
         });
       }
     });
@@ -128,7 +129,10 @@ class _IndicesBodyState extends State<IndicesBody>
               ),
               child: TabBar(
                 onTap: (value) {
-                  mode = value == 0 ? "nse" : "bse";
+                  setState(() {
+                    mode = value == 0 ? "nse" : "bse";
+                    areIndicesReady = false;
+                  });
                   // futureIndices = fetchIndices(mode);
                   // callStock();
                 },
@@ -155,7 +159,7 @@ class _IndicesBodyState extends State<IndicesBody>
                   color: Theme.of(context).primaryColor,
                 ),
               ),
-            if (areIndicesReady)
+            if (areIndicesReady && allIndices.type == mode)
               ScrollConfiguration(
                 behavior: ScrollConfiguration.of(context).copyWith(
                   dragDevices: {

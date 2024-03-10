@@ -163,12 +163,13 @@ class _StockBodyState extends State<StockBody> {
   }
 
   Candlesticks candleStickCreater(
-      List<dynamic> timestamp,
-      List<dynamic> open,
-      List<dynamic> close,
-      List<dynamic> high,
-      List<dynamic> low,
-      List<dynamic> volume) {
+    List<dynamic> timestamp,
+    List<dynamic> open,
+    List<dynamic> close,
+    List<dynamic> high,
+    List<dynamic> low,
+    List<dynamic> volume,
+  ) {
     late List<double> newOpen, newClose, newHigh, newLow, newVolume;
     late List<DateTime> newTimestamp;
 

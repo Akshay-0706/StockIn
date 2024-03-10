@@ -150,8 +150,8 @@ class _StockMarketState extends State<StockMarket> {
                                             .toString()
                                             .replaceAll(",", "")) >
                                         indices[index]
-                                    ? Colors.greenAccent.withAlpha(100)
-                                    : Colors.redAccent.withAlpha(100);
+                                    ? Colors.green.withAlpha(150)
+                                    : Colors.red.withAlpha(150);
 
                         if (indices.length != topIndices.length) {
                           indices.add(double.parse(topIndices[index]

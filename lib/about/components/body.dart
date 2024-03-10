@@ -33,12 +33,16 @@ class AboutBody extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: getHeight(40)),
-                Text(
-                  "${GlobalParams.aboutInfo}\n${GlobalParams.aboutInfo}",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: getHeight(18),
-                    color: Theme.of(context).primaryColorDark.withOpacity(0.7),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: getHeight(140)),
+                  child: Text(
+                    GlobalParams.aboutInfo,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: getHeight(18),
+                      color:
+                          Theme.of(context).primaryColorDark.withOpacity(0.7),
+                    ),
                   ),
                 ),
                 SizedBox(height: getHeight(20)),
@@ -192,6 +196,11 @@ class AboutTeamCard extends StatelessWidget {
                     decoration: const BoxDecoration(
                       color: Colors.orangeAccent,
                       shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      size: getHeight(50),
+                      color: Theme.of(context).backgroundColor,
                     ),
                   ),
                 ),
